@@ -95,7 +95,7 @@ class Game:
     def absorb_echoes(self):
         absorbed = len(self.echoes)
         self.score += absorbed * 5
-        self.echoes.clear()
+        GameManager.hard_remove_list(self.echoes, "echo")
         # small reward: burst of focus
         self.player.focus = clamp(self.player.focus + 30, 0, FOCUS_MAX)
 

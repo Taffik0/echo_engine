@@ -1,6 +1,3 @@
-from src.utility import singleton
-
-
 class CollisionManager:
     def __init__(self):
         self.colliders = []

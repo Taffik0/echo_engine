@@ -61,6 +61,3 @@ class Player(Entity):
         focus_ratio = clamp(self.focus / FOCUS_MAX, 0.0, 1.0)
         if focus_ratio > 0:
             pygame.draw.circle(surf, FOCUS_COLOR, (int(self.x), int(self.y)), int(self.r + 10 + 6 * focus_ratio), 1)
-
-    def on_collision(self, other):
-        print("столкнулся")

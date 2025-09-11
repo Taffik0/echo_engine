@@ -11,15 +11,17 @@ class GameManager:
 
     @classmethod
     def destroy_me(cls, entity, entity_type: str):
-        if entity_type == "enemy":
-            cls.destroy_collider(entity.collider)
-            cls.game.enemies.remove(entity)
-        if entity_type == "orb" and entity in cls.game.orbs:
-            cls.destroy_collider(entity.collider)
-            cls.game.orbs.remove(entity)
-        if entity_type == "echo":
-            cls.destroy_collider(entity.collider)
-            cls.game.echoes.remove(entity)
+        collections = {
+            "enemy": cls.game.enemies,
+            "orb": cls.game.orbs,
+            "echo": cls.game.echoes
+        }
+
+        collection = collections.get(entity_type)
+        if collection and entity in collection:
+            if entity.collider:
+                cls.destroy_collider(entity.collider)
+            collection.remove(entity)
 
     @classmethod
     def init(cls):
@@ -31,4 +33,25 @@ class GameManager:
     @classmethod
     def destroy_collider(cls, collider):
         collision_manager.unregister(collider)
+
+    @classmethod
+    def hard_remove(cls, entity, entity_type: str):
+        collections = {
+            "enemy": cls.game.enemies,
+            "orb": cls.game.orbs,
+            "echo": cls.game.echoes
+        }
+
+        collection = collections.get(entity_type)
+        if collection and entity in collection:
+            if entity.collider:
+                cls.destroy_collider(entity.collider)
+            collection.remove(entity)
+
+    @classmethod
+    def hard_remove_list(cls, entity_list, entity_type: str):
+        for entity in entity_list[:]:  # копия списка, чтобы безопасно удалять
+            cls.hard_remove(entity, entity_type)
+
+
 

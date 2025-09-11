@@ -47,7 +47,6 @@ class Enemy(Entity):
         pass
 
     def on_collision(self, other):
-        print("столкнулся", other, self)
         GameManager.game.end_game()
 
 
