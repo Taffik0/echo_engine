@@ -4,9 +4,12 @@ import pygame
 from src.settings import *
 from src.utility import normalize, clamp
 from src.game_manager import GameManager
+from src.entities.entity import Entity
+from src.physics.colliders import Collider
+from src.physics.colision_manager import collision_manager
 
 
-class Enemy:
+class Enemy(Entity):
     standard_speed_boost = 1
     color = ENEMY_COLOR
     x = 0
@@ -18,7 +21,14 @@ class Enemy:
 
         self.speed = random.uniform(ENEMY_SPEED_MIN, ENEMY_SPEED_MAX + speed_boost) * self.standard_speed_boost
         self.vx, self.vy = 0.0, 0.0
-        # запускаем метод старт
+
+        self.collider = Collider(
+            owner=self,
+            radius=self.r,
+            group="enemy",
+            mask=["player"]  # с кем взаимодействует
+        )
+        collision_manager.register(self.collider)
 
     def update(self, dt):
         player = GameManager.game.player
@@ -28,7 +38,6 @@ class Enemy:
         self.x += self.vx * dt
         self.y += self.vy * dt
 
-
     def draw(self, surf):
         pygame.draw.circle(surf, self.color, (int(self.x), int(self.y)), self.r)
         # small eye
@@ -36,6 +45,10 @@ class Enemy:
 
     def start(self):
         pass
+
+    def on_collision(self, other):
+        print("столкнулся", other, self)
+        GameManager.game.end_game()
 
 
 class FastEnemy(Enemy):

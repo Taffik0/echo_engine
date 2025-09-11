@@ -2,6 +2,7 @@
 
 from game import Game
 from src.game_manager import GameManager
+import src.physics.colision_manager
 
 # ------------------------------
 # SHADOW ECHO — Endless Mini-Arcade

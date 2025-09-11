@@ -1,17 +1,18 @@
 import pygame
-import random
-import math
 from collections import deque
 
 from settings import *
 from utility import clamp, circle_hit
 from src.game_manager import GameManager
 from src.factories.enemy_factory import EnemyFactory
+from src.physics.colision_manager import collision_manager
 
 from entities.player import Player
 from entities.enemy import Enemy
 from entities.echo import Echo
 from entities.orb import Orb
+from src.game_manager import GameManager
+
 
 class Game:
     def __init__(self):
@@ -44,6 +45,8 @@ class Game:
         self.trail_countdown = 0
 
     def reset(self):
+        collision_manager.reset()
+
         self.player = Player()
         self.enemies = []
         self.echoes = []
@@ -87,6 +90,7 @@ class Game:
 
     def spawn_orb(self):
         self.orbs.append(Orb())
+        print(self.orbs)
 
     def absorb_echoes(self):
         absorbed = len(self.echoes)
@@ -146,7 +150,7 @@ class Game:
 
         # Collisions
         # Enemies with player
-        for e in self.enemies:
+        """for e in self.enemies:
             if circle_hit(self.player.x, self.player.y, self.player.r, e.x, e.y, e.r):
                 self.end_game()
                 return
@@ -159,7 +163,9 @@ class Game:
         for o in list(self.orbs):
             if circle_hit(self.player.x, self.player.y, self.player.r, o.x, o.y, o.r):
                 self.orbs.remove(o)
-                self.absorb_echoes()
+                self.absorb_echoes()"""
+        collision_manager.check_all()
+        #print(f"{GameManager.game.orbs is self.orbs} {self.orbs} {GameManager.game.orbs}")
 
     def end_game(self):
         self.game_over = True

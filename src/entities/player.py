@@ -3,9 +3,13 @@ import math
 
 from src.settings import *
 from src.utility import normalize, clamp
+from src.physics.colliders import Collider
+from src.physics.colision_manager import collision_manager
+
+from src.entities.entity import Entity
 
 
-class Player:
+class Player(Entity):
     def __init__(self):
         self.x, self.y = CENTER
         self.vx, self.vy = 0.0, 0.0
@@ -14,6 +18,14 @@ class Player:
         self.dash_t = 0.0
         self.alive = True
         self.focus = FOCUS_MAX * 0.6
+
+        self.collider = Collider(
+            owner=self,
+            radius=self.r,
+            group="player",
+            mask=["enemy", "orb", "echo"]  # с кем взаимодействует
+        )
+        collision_manager.register(self.collider)
 
     def input(self, keys):
         ax = (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (keys[pygame.K_a] or keys[pygame.K_LEFT])
@@ -49,3 +61,6 @@ class Player:
         focus_ratio = clamp(self.focus / FOCUS_MAX, 0.0, 1.0)
         if focus_ratio > 0:
             pygame.draw.circle(surf, FOCUS_COLOR, (int(self.x), int(self.y)), int(self.r + 10 + 6 * focus_ratio), 1)
+
+    def on_collision(self, other):
+        print("столкнулся")
