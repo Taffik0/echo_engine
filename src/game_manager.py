@@ -14,13 +14,16 @@ class GameManager:
         collections = {
             "enemy": cls.game.enemies,
             "orb": cls.game.orbs,
-            "echo": cls.game.echoes
+            "echo": cls.game.echoes,
+            "entity": cls.game.entities
         }
 
         collection = collections.get(entity_type)
         if collection and entity in collection:
             if entity.collider:
                 cls.destroy_collider(entity.collider)
+                if entity_type == "orb":
+                    print(f"удалил орб с колайлором {entity}")
             collection.remove(entity)
 
     @classmethod
@@ -39,7 +42,8 @@ class GameManager:
         collections = {
             "enemy": cls.game.enemies,
             "orb": cls.game.orbs,
-            "echo": cls.game.echoes
+            "echo": cls.game.echoes,
+            "entity": cls.game.entities
         }
 
         collection = collections.get(entity_type)
@@ -53,5 +57,17 @@ class GameManager:
         for entity in entity_list[:]:  # копия списка, чтобы безопасно удалять
             cls.hard_remove(entity, entity_type)
 
+    @classmethod
+    def spawn_entity(cls, entity, entity_type, x, y):
+        collections = {
+            "enemy": cls.game.enemies,
+            "orb": cls.game.orbs,
+            "echo": cls.game.echoes,
+            "entity": cls.game.entities
+        }
+        entity.x = x
+        entity.y = y
+        collection = collections.get(entity_type)
+        collection.append(entity)
 
 

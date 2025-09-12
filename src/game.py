@@ -9,6 +9,7 @@ from src.physics.colision_manager import collision_manager
 
 from entities.player import Player
 from entities.enemy import Enemy
+from entities.entity import EntitySpawner
 from entities.echo import Echo
 from entities.orb import Orb
 from src.game_manager import GameManager
@@ -27,6 +28,7 @@ class Game:
         self.enemies = []
         self.echoes = []
         self.orbs = []
+        self.entities = []
         self.running = False
         self.game_over = False
         self.time = 0.0
@@ -51,6 +53,7 @@ class Game:
         self.enemies = []
         self.echoes = []
         self.orbs = []
+        self.entities = []
         self.running = True
         self.game_over = False
         self.time = 0.0
@@ -92,12 +95,17 @@ class Game:
         self.orbs.append(Orb())
         print(self.orbs)
 
-    def absorb_echoes(self):
+    def spawn_echo(self):
+        echo = Echo(1, 1)
+        spawner = EntitySpawner(3, entity=echo, entity_type="echo")
+        GameManager.spawn_entity(spawner, "entity", self.player.x, self.player.y)
+
+    """def absorb_echoes(self):
         absorbed = len(self.echoes)
         self.score += absorbed * 5
         GameManager.hard_remove_list(self.echoes, "echo")
         # small reward: burst of focus
-        self.player.focus = clamp(self.player.focus + 30, 0, FOCUS_MAX)
+        self.player.focus = clamp(self.player.focus + 30, 0, FOCUS_MAX)"""
 
     def update(self, dt, slow_factor):
         if self.game_over:
@@ -128,12 +136,16 @@ class Game:
             e.update(dt * slow_factor)
 
         # Trail and echo spawning from trail history
-        self.trail.append((self.player.x, self.player.y))
+        if self.t_echo >= self.echo_delay:
+            self.t_echo = 0
+            self.spawn_echo()
+        """self.trail.append((self.player.x, self.player.y))
         self.trail_countdown -= 1
         if self.trail_countdown <= 0 and len(self.trail) > 0:
             self.trail_countdown = self.trail_gap
             tx, ty = self.trail[0]
-            self.echoes.append(Echo(tx, ty))
+            self.echoes.append(Echo(tx, ty))"""
+
 
         # Update echoes
         for ec in self.echoes:
@@ -146,7 +158,11 @@ class Game:
             self.spawn_orb()
         for o in self.orbs:
             o.update(dt * slow_factor)
-        self.orbs = [o for o in self.orbs if o.alive()]
+        # self.orbs = [o for o in self.orbs if o.alive()]
+
+        # Entity update
+        for e in self.entities:
+            e.update(dt * slow_factor)
 
         # Collisions
         # Enemies with player
@@ -190,6 +206,8 @@ class Game:
             e.draw(self.screen)
         for o in self.orbs:
             o.draw(self.screen)
+        for en in self.entities:
+            en.draw(self.screen)
         self.player.draw(self.screen)
 
         # UI

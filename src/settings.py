@@ -1,6 +1,6 @@
 WIDTH, HEIGHT = 900, 600
 CENTER = (WIDTH // 2, HEIGHT // 2)
-FPS = 120
+FPS = 60
 
 # Colors
 WHITE = (240, 240, 240)
