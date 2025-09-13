@@ -3,6 +3,7 @@
 from game import Game
 from src.game_manager import GameManager
 import src.physics.colision_manager
+from src.spawners import spawner_register
 
 # ------------------------------
 # SHADOW ECHO — Endless Mini-Arcade
@@ -20,7 +21,4 @@ if __name__ == "__main__":
     game = Game()
     GameManager.game = game
     game.reset()  # init вызывается внутри reset
-    GameManager.init()
-    print(GameManager.player)
-    print(GameManager.player is game.player)
     game.run()

@@ -4,15 +4,15 @@ from collections import deque
 from settings import *
 from utility import clamp, circle_hit
 from src.game_manager import GameManager
-from src.factories.enemy_factory import EnemyFactory
 from src.physics.colision_manager import collision_manager
 
 from entities.player import Player
 from entities.enemy import Enemy
 from entities.entity import EntitySpawner
-from entities.echo import Echo
+from entities.echo import Echo, EchoSpawner
 from entities.orb import Orb
 from src.game_manager import GameManager
+from src.spawners import spawner_register
 
 
 class Game:
@@ -32,7 +32,7 @@ class Game:
         self.running = False
         self.game_over = False
         self.time = 0.0
-        self.score = 0
+        self.score = 0.0
         self.high = 0
         self.t_enemy = 0.0
         self.t_echo = 0.0
@@ -43,8 +43,6 @@ class Game:
         self.enemy_speed_boost = 0.0
         self.orb_spawn = 0.0
         self.trail = deque()
-        self.trail_gap = 0
-        self.trail_countdown = 0
 
     def reset(self):
         collision_manager.reset()
@@ -57,7 +55,7 @@ class Game:
         self.running = True
         self.game_over = False
         self.time = 0.0
-        self.score = 0
+        self.score = 0.0
         self.high = self.load_highscore()
         # Timers
         self.t_enemy = 0.0
@@ -71,8 +69,6 @@ class Game:
         self.orb_spawn = ORB_SPAWN_EVERY
         # Trail buffer to place echoes from historical positions
         self.trail = deque(maxlen=int(FPS * 3))  # store last ~3 seconds positions
-        self.trail_gap = int(self.echo_delay * FPS)
-        self.trail_countdown = self.trail_gap
 
     def load_highscore(self):
         try:
@@ -88,74 +84,23 @@ class Game:
         except Exception:
             pass
 
-    def spawn_enemy(self):
-        EnemyFactory.create_enemy(self.enemy_speed_boost)
-
-    def spawn_orb(self):
-        self.orbs.append(Orb())
-        print(self.orbs)
-
-    def spawn_echo(self):
-        echo = Echo(1, 1)
-        spawner = EntitySpawner(3, entity=echo, entity_type="echo")
-        GameManager.spawn_entity(spawner, "entity", self.player.x, self.player.y)
-
-    """def absorb_echoes(self):
-        absorbed = len(self.echoes)
-        self.score += absorbed * 5
-        GameManager.hard_remove_list(self.echoes, "echo")
-        # small reward: burst of focus
-        self.player.focus = clamp(self.player.focus + 30, 0, FOCUS_MAX)"""
-
     def update(self, dt, slow_factor):
         if self.game_over:
             return
         self.time += dt
-        self.t_enemy += dt
-        self.t_echo += dt
-        self.t_orb += dt
-        self.t_diff += dt
-
-        # Difficulty scaling
-        if self.t_diff >= DIFF_EVERY:
-            self.t_diff = 0.0
-            self.echo_delay *= DIFF_ECHO_DELAY_MULT
-            self.enemy_spawn *= DIFF_ENEMY_RATE_MULT
-            self.enemy_speed_boost += DIFF_ENEMY_SPEED_ADD
-            self.orb_spawn *= DIFF_ORB_RATE_MULT
-            self.trail_gap = max(4, int(self.echo_delay * FPS))
 
         # Player update
         self.player.update(dt)
-        self.score += int(1 * slow_factor)  # slow earn when time-slow active
+        self.score += 60*dt  # slow earn when time-slow active
         # Enemies
-        if self.t_enemy >= self.enemy_spawn:
-            self.t_enemy = 0.0
-            self.spawn_enemy()
         for e in self.enemies:
             e.update(dt * slow_factor)
-
-        # Trail and echo spawning from trail history
-        if self.t_echo >= self.echo_delay:
-            self.t_echo = 0
-            self.spawn_echo()
-        """self.trail.append((self.player.x, self.player.y))
-        self.trail_countdown -= 1
-        if self.trail_countdown <= 0 and len(self.trail) > 0:
-            self.trail_countdown = self.trail_gap
-            tx, ty = self.trail[0]
-            self.echoes.append(Echo(tx, ty))"""
-
 
         # Update echoes
         for ec in self.echoes:
             ec.update(dt * slow_factor)
         self.echoes = [ec for ec in self.echoes if ec.alive()]
 
-        # Orbs
-        if self.t_orb >= self.orb_spawn:
-            self.t_orb = 0.0
-            self.spawn_orb()
         for o in self.orbs:
             o.update(dt * slow_factor)
         # self.orbs = [o for o in self.orbs if o.alive()]
@@ -164,28 +109,16 @@ class Game:
         for e in self.entities:
             e.update(dt * slow_factor)
 
-        # Collisions
-        # Enemies with player
-        """for e in self.enemies:
-            if circle_hit(self.player.x, self.player.y, self.player.r, e.x, e.y, e.r):
-                self.end_game()
-                return
-        # Echoes with player
-        for ec in self.echoes:
-            if circle_hit(self.player.x, self.player.y, self.player.r, ec.x, ec.y, ec.r):
-                self.end_game()
-                return
-        # Orbs with player
-        for o in list(self.orbs):
-            if circle_hit(self.player.x, self.player.y, self.player.r, o.x, o.y, o.r):
-                self.orbs.remove(o)
-                self.absorb_echoes()"""
+        #print(spawner_registr.spawners)
+        for spawner in spawner_register.spawners:
+            spawner.update(dt * slow_factor)
+
         collision_manager.check_all()
         #print(f"{GameManager.game.orbs is self.orbs} {self.orbs} {GameManager.game.orbs}")
 
     def end_game(self):
         self.game_over = True
-        self.high = max(self.high, self.score)
+        self.high = max(self.high, int(self.score))
         self.save_highscore()
 
     def draw_grid(self, surf):
@@ -219,7 +152,7 @@ class Game:
         self.screen.blit(self.font.render("FOCUS", True, WHITE), (15, 28))
 
         # score
-        self.screen.blit(self.font.render(f"Score: {self.score}", True, WHITE), (WIDTH - 170, 12))
+        self.screen.blit(self.font.render(f"Score: {int(self.score)}", True, WHITE), (WIDTH - 170, 12))
         self.screen.blit(self.font.render(f"Best:  {self.high}", True, GRAY), (WIDTH - 170, 32))
 
         if self.game_over:

@@ -4,11 +4,6 @@ from src.physics.colision_manager import collision_manager
 class GameManager:
     game = None
 
-    player = None
-    enemies = []
-    orbs = []
-    echoes = []
-
     @classmethod
     def destroy_me(cls, entity, entity_type: str):
         collections = {
@@ -22,16 +17,8 @@ class GameManager:
         if collection and entity in collection:
             if entity.collider:
                 cls.destroy_collider(entity.collider)
-                if entity_type == "orb":
-                    print(f"удалил орб с колайлором {entity}")
             collection.remove(entity)
 
-    @classmethod
-    def init(cls):
-        cls.player = cls.game.player
-        cls.enemies = cls.game.enemies
-        cls.orbs = cls.game.orbs
-        cls.echoes = cls.game.echoes
 
     @classmethod
     def destroy_collider(cls, collider):

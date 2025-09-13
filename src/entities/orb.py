@@ -14,9 +14,6 @@ from src.game_manager import GameManager
 class Orb(LifeTimeEntity):
     def __init__(self):
         super().__init__(ORB_LIFETIME)
-        margin = 30
-        self.x = random.uniform(margin, WIDTH - margin)
-        self.y = random.uniform(margin, HEIGHT - margin)
         self.r = ORB_RADIUS
 
         self.collider = Collider(

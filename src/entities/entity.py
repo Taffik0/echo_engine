@@ -3,6 +3,8 @@ import pygame
 
 
 class Entity:
+    tag = "entity"
+    entity_name = ""
     collider = None
     color = (0, 0, 0)
     visible = True
@@ -43,8 +45,6 @@ class LifeTimeEntity(Entity):
 
 
 class EntitySpawner(LifeTimeEntity):
-    color = (40, 40, 100)
-    r = 7
     def __init__(self, life_time, entity, entity_type):
         super().__init__(life_time)
         self.entity = entity
@@ -53,8 +53,3 @@ class EntitySpawner(LifeTimeEntity):
     def on_life_time_end(self):
         GameManager.spawn_entity(self.entity, self.entity_type, self.x, self.y)
         GameManager.destroy_me(self, "entity")
-
-    def draw(self, surf):
-        if not self.visible:
-            return
-        pygame.draw.circle(surf, self.color, (int(self.x), int(self.y)), self.r, 2)

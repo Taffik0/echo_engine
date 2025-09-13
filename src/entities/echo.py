@@ -5,7 +5,7 @@ from src.settings import *
 from src.utility import clamp
 from src.physics.colliders import Collider
 from src.physics.colision_manager import collision_manager
-from src.entities.entity import Entity, LifeTimeEntity
+from src.entities.entity import LifeTimeEntity, EntitySpawner
 from src.game_manager import GameManager
 
 
@@ -43,3 +43,13 @@ class Echo(LifeTimeEntity):
 
     def on_life_time_end(self):
         GameManager.destroy_me(self, "echo")
+
+
+class EchoSpawner(EntitySpawner):
+    color = (40, 40, 100)
+    r = 7
+
+    def draw(self, surf):
+        if not self.visible:
+            return
+        pygame.draw.circle(surf, self.color, (int(self.x), int(self.y)), self.r, 2)
