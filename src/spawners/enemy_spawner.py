@@ -14,6 +14,7 @@ class EnemySpawner(Spawner):
         super().__init__(*args, **kwargs)
         self.diff_enemy_speed_add = diff_enemy_speed_add
         self.enemy_speed_boost = diff_enemy_speed_add
+        self.start_enemy_speed_boost = diff_enemy_speed_add
 
     def spawn(self):
         enemy = self.factory.create_entity(self.enemy_speed_boost)
@@ -31,6 +32,10 @@ class EnemySpawner(Spawner):
     def diff_add(self):
         super().diff_add()
         self.enemy_speed_boost += self.diff_enemy_speed_add
+
+    def reset(self):
+        super().reset()
+        self.enemy_speed_boost = self.start_enemy_speed_boost
 
 
 spawner_register.add_spawner(

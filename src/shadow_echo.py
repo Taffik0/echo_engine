@@ -1,6 +1,6 @@
 
 
-from game import Game
+from src.game import Game
 from src.game_manager import GameManager
 import src.physics.colision_manager
 from src.spawners import spawner_register

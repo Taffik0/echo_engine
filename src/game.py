@@ -1,17 +1,18 @@
 import pygame
 from collections import deque
 
-from settings import *
-from utility import clamp, circle_hit
+from src.settings import *
+from src.utility import clamp, circle_hit
 from src.game_manager import GameManager
 from src.physics.colision_manager import collision_manager
 
-from entities.player import Player
-from entities.enemy import Enemy
-from entities.entity import EntitySpawner
-from entities.echo import Echo, EchoSpawner
-from entities.orb import Orb
+from src.entities.player import Player
+from src.entities.enemy import Enemy
+from src.entities.entity import EntitySpawner
+from src.entities.echo import Echo, EchoSpawner
+from src.entities.orb import Orb
 from src.game_manager import GameManager
+from src.sound_manager import SoundManager
 from src.spawners import spawner_register
 
 
@@ -70,6 +71,9 @@ class Game:
         # Trail buffer to place echoes from historical positions
         self.trail = deque(maxlen=int(FPS * 3))  # store last ~3 seconds positions
 
+        spawner_register.reset_spawners()
+        SoundManager.load_and_run_sound(path="../assets/music/untitled.mp3", loops=-1)
+
     def load_highscore(self):
         try:
             with open("../shadow_echo_highscore.txt", "r") as f:
@@ -103,18 +107,15 @@ class Game:
 
         for o in self.orbs:
             o.update(dt * slow_factor)
-        # self.orbs = [o for o in self.orbs if o.alive()]
 
         # Entity update
         for e in self.entities:
             e.update(dt * slow_factor)
 
-        #print(spawner_registr.spawners)
         for spawner in spawner_register.spawners:
             spawner.update(dt * slow_factor)
 
         collision_manager.check_all()
-        #print(f"{GameManager.game.orbs is self.orbs} {self.orbs} {GameManager.game.orbs}")
 
     def end_game(self):
         self.game_over = True

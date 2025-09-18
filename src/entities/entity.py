@@ -3,7 +3,7 @@ import pygame
 
 
 class Entity:
-    tag = "entity"
+    tags = ["entity"]
     entity_name = ""
     collider = None
     color = (0, 0, 0)

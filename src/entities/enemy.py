@@ -59,7 +59,7 @@ class FastEnemy(Enemy):
         self.y += self.vy * dt
 
         # Удаляем врага, если он улетел далеко за экран
-        margin = 50  # запас за пределами экрана
+        margin = 100  # запас за пределами экрана
         if (self.x < -margin or self.x > WIDTH + margin or
                 self.y < -margin or self.y > HEIGHT + margin):
             self.destroy()

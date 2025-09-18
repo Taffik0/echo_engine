@@ -10,6 +10,7 @@ from src.game_manager import GameManager
 
 
 class Echo(LifeTimeEntity):
+    tags = ["echo"]
     def __init__(self, x, y):
         super().__init__(ECHO_LIFETIME)
         self.x, self.y = x, y

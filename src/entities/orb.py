@@ -25,7 +25,7 @@ class Orb(LifeTimeEntity):
         collision_manager.register(self.collider)
 
     def update(self, dt):
-        self.current_time += dt
+        super().update(dt)
 
     def alive(self):
         return self.current_time < self.life_time
@@ -37,7 +37,8 @@ class Orb(LifeTimeEntity):
         pygame.draw.circle(surf, ORB_COLOR, (int(self.x), int(self.y)), self.r + 6 + pulse, 1)
 
     def on_collision(self, other):
-        GameManager.hard_remove_list(GameManager.game.echoes, "echo")
+        echos = GameManager.get_entity_by_tag("echo")
+        GameManager.hard_remove_list(echos, "echo")
         GameManager.destroy_me(self, "orb")
 
     def on_life_time_end(self):

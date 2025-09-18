@@ -7,9 +7,9 @@ class GameManager:
     @classmethod
     def destroy_me(cls, entity, entity_type: str):
         collections = {
-            "enemy": cls.game.enemies,
-            "orb": cls.game.orbs,
-            "echo": cls.game.echoes,
+            "enemy": cls.game.entities,
+            "orb": cls.game.entities,
+            "echo": cls.game.entities,
             "entity": cls.game.entities
         }
 
@@ -27,9 +27,9 @@ class GameManager:
     @classmethod
     def hard_remove(cls, entity, entity_type: str):
         collections = {
-            "enemy": cls.game.enemies,
-            "orb": cls.game.orbs,
-            "echo": cls.game.echoes,
+            "enemy": cls.game.entities,
+            "orb": cls.game.entities,
+            "echo": cls.game.entities,
             "entity": cls.game.entities
         }
 
@@ -47,14 +47,17 @@ class GameManager:
     @classmethod
     def spawn_entity(cls, entity, entity_type, x, y):
         collections = {
-            "enemy": cls.game.enemies,
-            "orb": cls.game.orbs,
-            "echo": cls.game.echoes,
+            "enemy": cls.game.entities,
+            "orb": cls.game.entities,
+            "echo": cls.game.entities,
             "entity": cls.game.entities
         }
         entity.x = x
         entity.y = y
         collection = collections.get(entity_type)
         collection.append(entity)
+        entity.start()
 
-
+    @classmethod
+    def get_entity_by_tag(cls, tag):
+        return [e for e in cls.game.entities if tag in e.tags]

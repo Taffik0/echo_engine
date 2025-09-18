@@ -1,11 +1,14 @@
 class Spawner:
     def __init__(self, spawn_delay, diff_delay_mult, diff_delay, factory):
         self.spawn_delay = spawn_delay
+        self.start_spawn_delay = spawn_delay
 
         self.spawn_time = 0
         self.diff_time = 0
+
         self.diff_delay_mult = diff_delay_mult
         self.diff_delay = diff_delay
+        self.start_diff_delay = diff_delay
         self.factory = factory
 
     def update(self, dt):
@@ -25,3 +28,9 @@ class Spawner:
 
     def diff_add(self):
         self.spawn_delay *= self.diff_delay_mult
+
+    def reset(self):
+        self.spawn_time = 0
+        self.diff_time = 0
+        self.spawn_delay = self.start_spawn_delay
+        self.start_diff_delay = self.start_diff_delay
