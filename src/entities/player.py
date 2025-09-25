@@ -3,15 +3,17 @@ import math
 
 from src.settings import *
 from src.utility import normalize, clamp
-from src.physics.colliders import Collider
+from src.physics.colliders import CircleCollider
 from src.physics.colision_manager import collision_manager
+from src.physics.physics import Vector2
 
 from src.entities.entity import Entity
 
 
 class Player(Entity):
     def __init__(self):
-        self.x, self.y = CENTER
+        super().__init__()
+        self.position = Vector2(*CENTER)
         self.vx, self.vy = 0.0, 0.0
         self.r = PLAYER_RADIUS
         self.dash_cd = 0.0
@@ -19,7 +21,7 @@ class Player(Entity):
         self.alive = True
         self.focus = FOCUS_MAX * 0.6
 
-        self.collider = Collider(
+        self.collider = CircleCollider(
             owner=self,
             radius=self.r,
             group="player",
@@ -39,10 +41,10 @@ class Player(Entity):
     def update(self, dt):
         self.dash_cd = max(0.0, self.dash_cd - dt)
         self.dash_t = max(0.0, self.dash_t - dt)
-        self.x += self.vx * dt
-        self.y += self.vy * dt
-        self.x = clamp(self.x, self.r, WIDTH - self.r)
-        self.y = clamp(self.y, self.r, HEIGHT - self.r)
+        self.position.x += self.vx * dt
+        self.position.y += self.vy * dt
+        self.x = clamp(self.position.x, self.r, WIDTH - self.r)
+        self.y = clamp(self.position.y, self.r, HEIGHT - self.r)
 
     def try_dash(self):
         if self.dash_cd <= 0.0:

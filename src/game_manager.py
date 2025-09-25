@@ -1,24 +1,17 @@
 from src.physics.colision_manager import collision_manager
+from src.physics.physics import Vector2
 
 
 class GameManager:
     game = None
 
     @classmethod
-    def destroy_me(cls, entity, entity_type: str):
-        collections = {
-            "enemy": cls.game.entities,
-            "orb": cls.game.entities,
-            "echo": cls.game.entities,
-            "entity": cls.game.entities
-        }
-
-        collection = collections.get(entity_type)
+    def destroy_me(cls, entity):
+        collection = cls.game.entities
         if collection and entity in collection:
             if entity.collider:
                 cls.destroy_collider(entity.collider)
             collection.remove(entity)
-
 
     @classmethod
     def destroy_collider(cls, collider):
@@ -26,18 +19,10 @@ class GameManager:
 
     @classmethod
     def hard_remove(cls, entity, entity_type: str):
-        collections = {
-            "enemy": cls.game.entities,
-            "orb": cls.game.entities,
-            "echo": cls.game.entities,
-            "entity": cls.game.entities
-        }
-
-        collection = collections.get(entity_type)
-        if collection and entity in collection:
+        if cls.game.entities and entity in cls.game.entities:
             if entity.collider:
                 cls.destroy_collider(entity.collider)
-            collection.remove(entity)
+            cls.game.entities.remove(entity)
 
     @classmethod
     def hard_remove_list(cls, entity_list, entity_type: str):
@@ -46,16 +31,10 @@ class GameManager:
 
     @classmethod
     def spawn_entity(cls, entity, entity_type, x, y):
-        collections = {
-            "enemy": cls.game.entities,
-            "orb": cls.game.entities,
-            "echo": cls.game.entities,
-            "entity": cls.game.entities
-        }
         entity.x = x
         entity.y = y
-        collection = collections.get(entity_type)
-        collection.append(entity)
+        entity.position = Vector2(x, y)
+        cls.game.entities.append(entity)
         entity.start()
 
     @classmethod

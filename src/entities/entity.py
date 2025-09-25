@@ -1,15 +1,18 @@
 from src.game_manager import GameManager
 import pygame
 
+from src.physics.physics import Vector2
+
 
 class Entity:
-    tags = ["entity"]
-    entity_name = ""
-    collider = None
-    color = (0, 0, 0)
-    visible = True
-    x = 0
-    y = 0
+
+    def __init__(self):
+        self.tags = ["entity"]
+        self.entity_name = ""
+        self.collider = None
+        self.color = (0, 0, 0)
+        self.visible = True
+        self.position = Vector2()
 
     def update(self, dt):
         pass
@@ -28,11 +31,11 @@ class Entity:
 
 
 class LifeTimeEntity(Entity):
-    life_time = 1
 
     def __init__(self, life_time):
         super().__init__()
         self.life_time = life_time
+        self.start_life_time = life_time
         self.current_time = 0
 
     def update(self, dt):
@@ -51,5 +54,4 @@ class EntitySpawner(LifeTimeEntity):
         self.entity_type = entity_type
 
     def on_life_time_end(self):
-        GameManager.spawn_entity(self.entity, self.entity_type, self.x, self.y)
-        GameManager.destroy_me(self, "entity")
+        GameManager.spawn_entity(self.entity, self.entity_type, self.position.x, self.position.y)

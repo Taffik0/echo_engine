@@ -2,18 +2,15 @@ import pygame
 from collections import deque
 
 from src.settings import *
-from src.utility import clamp, circle_hit
-from src.game_manager import GameManager
+from src.utility import clamp
 from src.physics.colision_manager import collision_manager
 
 from src.entities.player import Player
-from src.entities.enemy import Enemy
-from src.entities.entity import EntitySpawner
-from src.entities.echo import Echo, EchoSpawner
-from src.entities.orb import Orb
-from src.game_manager import GameManager
 from src.sound_manager import SoundManager
+from src.event_system import EventSystem
+
 from src.spawners import spawner_register
+from src.workers import worker_register
 
 
 class Game:
@@ -26,52 +23,29 @@ class Game:
         self.big_font = pygame.font.SysFont("consolas", 48, bold=True)
 
         self.player = None
-        self.enemies = []
-        self.echoes = []
-        self.orbs = []
         self.entities = []
         self.running = False
         self.game_over = False
         self.time = 0.0
         self.score = 0.0
         self.high = 0
-        self.t_enemy = 0.0
-        self.t_echo = 0.0
-        self.t_orb = 0.0
-        self.t_diff = 0.0
-        self.echo_delay = 0.0
-        self.enemy_spawn = 0.0
-        self.enemy_speed_boost = 0.0
-        self.orb_spawn = 0.0
-        self.trail = deque()
+
+        EventSystem.trigger_event("start")
 
     def reset(self):
         collision_manager.reset()
 
         self.player = Player()
-        self.enemies = []
-        self.echoes = []
-        self.orbs = []
         self.entities = []
         self.running = True
         self.game_over = False
         self.time = 0.0
         self.score = 0.0
         self.high = self.load_highscore()
-        # Timers
-        self.t_enemy = 0.0
-        self.t_echo = 0.0
-        self.t_orb = 0.0
-        self.t_diff = 0.0
-        # Difficulty state
-        self.echo_delay = ECHO_SPAWN_DELAY
-        self.enemy_spawn = ENEMY_SPAWN_EVERY
-        self.enemy_speed_boost = 0.0
-        self.orb_spawn = ORB_SPAWN_EVERY
-        # Trail buffer to place echoes from historical positions
-        self.trail = deque(maxlen=int(FPS * 3))  # store last ~3 seconds positions
 
         spawner_register.reset_spawners()
+        worker_register.reset_workers()
+
         SoundManager.load_and_run_sound(path="../assets/music/untitled.mp3", loops=-1)
 
     def load_highscore(self):
@@ -96,24 +70,13 @@ class Game:
         # Player update
         self.player.update(dt)
         self.score += 60*dt  # slow earn when time-slow active
-        # Enemies
-        for e in self.enemies:
-            e.update(dt * slow_factor)
-
-        # Update echoes
-        for ec in self.echoes:
-            ec.update(dt * slow_factor)
-        self.echoes = [ec for ec in self.echoes if ec.alive()]
-
-        for o in self.orbs:
-            o.update(dt * slow_factor)
 
         # Entity update
         for e in self.entities:
             e.update(dt * slow_factor)
 
-        for spawner in spawner_register.spawners:
-            spawner.update(dt * slow_factor)
+        spawner_register.spawners_update(dt*slow_factor)
+        worker_register.workers_update(dt)
 
         collision_manager.check_all()
 
@@ -133,15 +96,9 @@ class Game:
         self.screen.fill(BLACK)
         self.draw_grid(self.screen)
 
-        # Draw echoes beneath enemies
-        for ec in self.echoes:
-            ec.draw(self.screen)
-        for e in self.enemies:
-            e.draw(self.screen)
-        for o in self.orbs:
-            o.draw(self.screen)
         for en in self.entities:
             en.draw(self.screen)
+
         self.player.draw(self.screen)
 
         # UI

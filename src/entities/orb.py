@@ -6,7 +6,7 @@ from src.settings import *
 
 from src.entities.entity import Entity, LifeTimeEntity
 
-from src.physics.colliders import Collider
+from src.physics.colliders import CircleCollider
 from src.physics.colision_manager import collision_manager
 from src.game_manager import GameManager
 
@@ -16,7 +16,7 @@ class Orb(LifeTimeEntity):
         super().__init__(ORB_LIFETIME)
         self.r = ORB_RADIUS
 
-        self.collider = Collider(
+        self.collider = CircleCollider(
             owner=self,
             radius=self.r,
             group="orb",
@@ -32,17 +32,17 @@ class Orb(LifeTimeEntity):
 
     def draw(self, surf):
         # pulsing ring
-        pygame.draw.circle(surf, ORB_COLOR, (int(self.x), int(self.y)), self.r)
+        pygame.draw.circle(surf, ORB_COLOR, (int(self.position.x), int(self.position.y)), self.r)
         pulse = 2 + int(2 * math.sin(self.current_time * 6))
-        pygame.draw.circle(surf, ORB_COLOR, (int(self.x), int(self.y)), self.r + 6 + pulse, 1)
+        pygame.draw.circle(surf, ORB_COLOR, (int(self.position.x), int(self.position.y)), self.r + 6 + pulse, 1)
 
     def on_collision(self, other):
         echos = GameManager.get_entity_by_tag("echo")
         GameManager.hard_remove_list(echos, "echo")
-        GameManager.destroy_me(self, "orb")
+        GameManager.destroy_me(self)
 
     def on_life_time_end(self):
         self.destroy()
 
     def destroy(self):
-        GameManager.destroy_me(self, "orb")
+        GameManager.destroy_me(self)

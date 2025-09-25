@@ -15,7 +15,7 @@ class CollisionManager:
             for j in range(i + 1, len(colliders_copy)):
                 c1 = colliders_copy[i]
                 c2 = colliders_copy[j]
-                if c1 in self.colliders and c2 in self.colliders:  # оба ещё живы
+                if c1 in self.colliders and c2 in self.colliders: # оба ещё живы
                     if c1.check_collision(c2):
                         c1.owner.on_collision(c2.owner)
                         c2.owner.on_collision(c1.owner)
