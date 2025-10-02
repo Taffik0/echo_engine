@@ -1,4 +1,5 @@
 import pygame
+import inspect
 
 from src.settings import *
 
@@ -10,9 +11,8 @@ from src.game_manager import GameManager
 
 
 class Echo(LifeTimeEntity):
-    def __init__(self, x, y):
+    def __init__(self):
         super().__init__(ECHO_LIFETIME)
-        self.x, self.y = x, y
         self.r = ECHO_RADIUS
         self.tags = ["echo"]
 
@@ -36,10 +36,10 @@ class Echo(LifeTimeEntity):
             int(ECHO_COLOR[1] - ECHO_COLOR[1]*(1-a)),
             int(ECHO_COLOR[2] - ECHO_COLOR[2]*(1-a))
         )
-        pygame.draw.circle(surf, col, (int(self.x), int(self.y)), self.r, 2)
+        pygame.draw.circle(surf, col, (int(self.transform.position.x), int(self.transform.position.y)), self.r, 2)
 
     def on_collision(self, other):
-        GameManager.destroy_me(self)
+        print(other, self)
         GameManager.game.end_game()
 
     def on_life_time_end(self):
@@ -56,7 +56,7 @@ class EchoSpawner(EntitySpawner):
     def draw(self, surf):
         if not self.visible:
             return
-        pygame.draw.circle(surf, self.color, (int(self.position.x), int(self.position.y)), self.r, 2)
+        pygame.draw.circle(surf, self.color, (int(self.transform.position.x), int(self.transform.position.y)), self.r, 2)
 
     def on_life_time_end(self):
         super().on_life_time_end()
@@ -64,3 +64,4 @@ class EchoSpawner(EntitySpawner):
 
     def destroy(self):
         GameManager.destroy_me(self)
+

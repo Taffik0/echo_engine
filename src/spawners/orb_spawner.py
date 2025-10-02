@@ -8,6 +8,8 @@ from src.spawners import spawner_register
 
 from src.factories.orb_factory import OrbFactory
 
+from src.physics.physics import Vector2
+
 
 class OrbSpawner(Spawner):
     def spawn(self):
@@ -15,7 +17,7 @@ class OrbSpawner(Spawner):
         x = random.uniform(margin, WIDTH - margin)
         y = random.uniform(margin, HEIGHT - margin)
         orb = self.factory.create_entity()
-        GameManager.spawn_entity(orb, "orb", x, y)
+        GameManager.spawn_entity(orb, position=Vector2(x, y))
 
 
 spawner_register.add_spawner(OrbSpawner(ORB_SPAWN_EVERY, DIFF_ORB_RATE_MULT, DIFF_EVERY, OrbFactory))

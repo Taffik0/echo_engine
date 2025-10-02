@@ -25,12 +25,12 @@ class CircleCollider(Collider):
         return other.check_collision_with_circle(self)
 
     def check_collision_with_circle(self, other):
-        dx = self.owner.position.x - other.owner.position.x
-        dy = self.owner.position.y - other.owner.position.y
+        dx = self.owner.transform.position.x - other.owner.transform.position.x
+        dy = self.owner.transform.position.y - other.owner.transform.position.y
         return dx*dx + dy*dy <= (self.radius + other.radius)**2
 
     def check_collision_with_rect(self, rect):
-        cx, cy = self.owner.position.x, self.owner.position.y
+        cx, cy = self.owner.transform.position.x, self.owner.transform.position.y
         # ближайшая точка на прямоугольнике
         nearest_x = max(rect.x, min(cx, rect.x + rect.width))
         nearest_y = max(rect.y, min(cy, rect.y + rect.height))
@@ -42,8 +42,10 @@ class CircleCollider(Collider):
 class RectCollider(Collider):
     def __init__(self, owner, width, height, group, mask, active=True):
         super().__init__(owner, group, mask, active)
-        self.x = owner.position.x - width / 2
-        self.y = owner.position.y - height / 2
+        # центр прямоугольника = transform.position
+        cx, cy = owner.transform.position.x, owner.transform.position.y
+        self.x = cx - width / 2
+        self.y = cy - height / 2
         self.width = width
         self.height = height
 

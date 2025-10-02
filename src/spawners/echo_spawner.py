@@ -7,14 +7,16 @@ from src.entities.echo import Echo, EchoSpawner
 
 from src.settings import ECHO_SPAWN_DELAY, DIFF_ECHO_DELAY_MULT, DIFF_EVERY
 
+from src.physics.physics import Vector2
+
 
 class EchoSpawnerSpawner(Spawner):
     def spawn(self):
-        player_x = GameManager.game.player.x
-        player_y = GameManager.game.player.y
-        echo = Echo(1, 1)
+        player_x = GameManager.game.player.transform.position.x
+        player_y = GameManager.game.player.transform.position.y
+        echo = Echo
         spawner = EchoSpawner(2, entity=echo, entity_type="echo")
-        GameManager.spawn_entity(spawner, "entity", player_x, player_y)
+        GameManager.spawn_entity(spawner, position=Vector2(player_x, player_y))
 
 
 spawner_register.add_spawner(EchoSpawnerSpawner(ECHO_SPAWN_DELAY, DIFF_ECHO_DELAY_MULT, DIFF_EVERY, None))

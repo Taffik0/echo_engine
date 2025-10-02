@@ -1,3 +1,4 @@
+import inspect
 import pygame
 from collections import deque
 
@@ -11,6 +12,7 @@ from src.event_system import EventSystem
 
 from src.spawners import spawner_register
 from src.workers import worker_register
+from src.visual_effects.visual_effects_registr import VisualEffectRegister
 
 
 class Game:
@@ -47,6 +49,7 @@ class Game:
         worker_register.reset_workers()
 
         SoundManager.load_and_run_sound(path="../assets/music/untitled.mp3", loops=-1)
+        EventSystem.trigger_event("reset")
 
     def load_highscore(self):
         try:
@@ -75,32 +78,32 @@ class Game:
         for e in self.entities:
             e.update(dt * slow_factor)
 
+        EventSystem.trigger_event("update")  # call update event
+
         spawner_register.spawners_update(dt*slow_factor)
         worker_register.workers_update(dt)
 
         collision_manager.check_all()
+        EventSystem.trigger_event("lastUpdate") # call lastUpdate event
 
     def end_game(self):
         self.game_over = True
         self.high = max(self.high, int(self.score))
         self.save_highscore()
+        stack = inspect.stack()
+        caller = stack[1]  # [0] — это текущий кадр, [1] — кто вызвал
+        print(f"Игра закончена от: {caller.function}, в файле: {caller.filename}, строка: {caller.lineno}")
+        print(self.entities)
 
-    def draw_grid(self, surf):
-        gap = 30
-        for x in range(0, WIDTH, gap):
-            pygame.draw.line(surf, (30, 32, 36), (x, 0), (x, HEIGHT))
-        for y in range(0, HEIGHT, gap):
-            pygame.draw.line(surf, (30, 32, 36), (0, y), (WIDTH, y))
-
-    def draw(self):
+    def draw(self, dt, slow_factor):
         self.screen.fill(BLACK)
-        self.draw_grid(self.screen)
+        VisualEffectRegister.under_draw(self.screen, dt*slow_factor)
 
         for en in self.entities:
             en.draw(self.screen)
 
         self.player.draw(self.screen)
-
+        VisualEffectRegister.draw(self.screen, dt*slow_factor)
         # UI
         bar_w, bar_h = 180, 10
         # focus bar
@@ -112,6 +115,8 @@ class Game:
         # score
         self.screen.blit(self.font.render(f"Score: {int(self.score)}", True, WHITE), (WIDTH - 170, 12))
         self.screen.blit(self.font.render(f"Best:  {self.high}", True, GRAY), (WIDTH - 170, 32))
+
+        VisualEffectRegister.over_draw(self.screen, dt*slow_factor)
 
         if self.game_over:
             s1 = self.big_font.render("GAME OVER", True, WHITE)
@@ -153,5 +158,5 @@ class Game:
                 self.player.focus = clamp(self.player.focus + FOCUS_REGEN * dt, 0, FOCUS_MAX)
 
             self.update(dt, slow_factor)
-            self.draw()
+            self.draw(dt, slow_factor)
         pygame.quit()

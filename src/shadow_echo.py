@@ -6,6 +6,7 @@ import src.physics.colision_manager
 
 from src.spawners import spawner_register
 from src.workers import worker_register
+import src.visual_effects
 
 # ------------------------------
 # SHADOW ECHO — Endless Mini-Arcade

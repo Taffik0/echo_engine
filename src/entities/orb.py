@@ -32,9 +32,9 @@ class Orb(LifeTimeEntity):
 
     def draw(self, surf):
         # pulsing ring
-        pygame.draw.circle(surf, ORB_COLOR, (int(self.position.x), int(self.position.y)), self.r)
+        pygame.draw.circle(surf, ORB_COLOR, (int(self.transform.position.x), int(self.transform.position.y)), self.r)
         pulse = 2 + int(2 * math.sin(self.current_time * 6))
-        pygame.draw.circle(surf, ORB_COLOR, (int(self.position.x), int(self.position.y)), self.r + 6 + pulse, 1)
+        pygame.draw.circle(surf, ORB_COLOR, (int(self.transform.position.x), int(self.transform.position.y)), self.r + 6 + pulse, 1)
 
     def on_collision(self, other):
         echos = GameManager.get_entity_by_tag("echo")

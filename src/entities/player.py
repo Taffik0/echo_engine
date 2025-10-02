@@ -6,14 +6,14 @@ from src.utility import normalize, clamp
 from src.physics.colliders import CircleCollider
 from src.physics.colision_manager import collision_manager
 from src.physics.physics import Vector2
+from src.physics.transform import Transform
 
 from src.entities.entity import Entity
 
 
 class Player(Entity):
     def __init__(self):
-        super().__init__()
-        self.position = Vector2(*CENTER)
+        super().__init__(Transform(Vector2(*CENTER)))  # теперь используем transform
         self.vx, self.vy = 0.0, 0.0
         self.r = PLAYER_RADIUS
         self.dash_cd = 0.0
@@ -41,10 +41,12 @@ class Player(Entity):
     def update(self, dt):
         self.dash_cd = max(0.0, self.dash_cd - dt)
         self.dash_t = max(0.0, self.dash_t - dt)
-        self.position.x += self.vx * dt
-        self.position.y += self.vy * dt
-        self.x = clamp(self.position.x, self.r, WIDTH - self.r)
-        self.y = clamp(self.position.y, self.r, HEIGHT - self.r)
+        # двигаем transform.position
+        self.transform.position.x += self.vx * dt
+        self.transform.position.y += self.vy * dt
+        # ограничение по границам
+        self.transform.position.x = clamp(self.transform.position.x, self.r, WIDTH - self.r)
+        self.transform.position.y = clamp(self.transform.position.y, self.r, HEIGHT - self.r)
 
     def try_dash(self):
         if self.dash_cd <= 0.0:
@@ -52,14 +54,16 @@ class Player(Entity):
             self.dash_cd = DASH_COOLDOWN
 
     def draw(self, surf):
-        # Ring indicates dash cooldown, blue ring indicates focus reserve
-        pygame.draw.circle(surf, PLAYER_COLOR, (int(self.x), int(self.y)), self.r)
-        # dash ring
+        x = int(self.transform.position.x)
+        y = int(self.transform.position.y)
+        # основной круг игрока
+        pygame.draw.circle(surf, PLAYER_COLOR, (x, y), self.r)
+        # dash cooldown ring
         cd_ratio = 1.0 - clamp(self.dash_cd / DASH_COOLDOWN, 0.0, 1.0)
-        pygame.draw.circle(surf, WHITE, (int(self.x), int(self.y)), self.r + 6, 2)
+        pygame.draw.circle(surf, WHITE, (x, y), self.r + 6, 2)
         end_angle = -math.pi / 2 + cd_ratio * 2 * math.pi
-        pygame.draw.arc(surf, ECHO_COLOR, (self.x - self.r - 6, self.y - self.r - 6, (self.r + 6) * 2, (self.r + 6) * 2), -math.pi/2, end_angle, 3)
+        pygame.draw.arc(surf, ECHO_COLOR, (x - self.r - 6, y - self.r - 6, (self.r + 6) * 2, (self.r + 6) * 2), -math.pi/2, end_angle, 3)
         # focus halo
         focus_ratio = clamp(self.focus / FOCUS_MAX, 0.0, 1.0)
         if focus_ratio > 0:
-            pygame.draw.circle(surf, FOCUS_COLOR, (int(self.x), int(self.y)), int(self.r + 10 + 6 * focus_ratio), 1)
+            pygame.draw.circle(surf, FOCUS_COLOR, (x, y), int(self.r + 10 + 6 * focus_ratio), 1)

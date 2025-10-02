@@ -29,17 +29,20 @@ class Enemy(Entity):
         collision_manager.register(self.collider)
 
     def update(self, dt):
+        position = self.transform.position
         player = GameManager.game.player
-        dx, dy = player.x - self.position.x, player.y - self.position.y
+        player_position = player.transform.position
+        dx, dy = player_position.x - position.x, player_position.y - position.y
         ndx, ndy = normalize(dx, dy)
         self.vx, self.vy = ndx * self.speed, ndy * self.speed
-        self.position.x += self.vx * dt
-        self.position.y += self.vy * dt
+        position.x += self.vx * dt
+        position.y += self.vy * dt
 
     def draw(self, surf):
-        pygame.draw.circle(surf, self.color, (int(self.position.x), int(self.position.y)), self.r)
+        position = self.transform.position
+        pygame.draw.circle(surf, self.color, (int(position.x), int(position.y)), self.r)
         # small eye
-        pygame.draw.circle(surf, BLACK, (int(self.position.x), int(self.position.y)), 3)
+        pygame.draw.circle(surf, BLACK, (int(position.x), int(position.y)), 3)
 
     def start(self):
         pass
@@ -57,18 +60,21 @@ class FastEnemy(Enemy):
         self.speed = random.uniform(ENEMY_SPEED_MIN, ENEMY_SPEED_MAX + speed_boost) * self.standard_speed_boost
 
     def update(self, dt):
-        self.position.x += self.vx * dt
-        self.position.y += self.vy * dt
+        position = self.transform.position
+        position.x += self.vx * dt
+        position.y += self.vy * dt
 
         # Удаляем врага, если он улетел далеко за экран
         margin = 100  # запас за пределами экрана
-        if (self.position.x < -margin or self.position.x > WIDTH + margin or
-                self.position.y < -margin or self.position.y > HEIGHT + margin):
+        if (position.x < -margin or position.x > WIDTH + margin or
+                position.y < -margin or position.y > HEIGHT + margin):
             self.destroy()
 
     def start(self):
+        position = self.transform.position
         player = GameManager.game.player
-        dx, dy = player.x - self.position.x, player.y - self.position.y
+        player_position = player.transform.position
+        dx, dy = player_position.x - position.x, player_position.y - position.y
         ndx, ndy = normalize(dx, dy)
         self.vx, self.vy = ndx * self.speed, ndy * self.speed
 
