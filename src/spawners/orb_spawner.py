@@ -8,7 +8,7 @@ from src.spawners import spawner_register
 
 from src.factories.orb_factory import OrbFactory
 
-from src.physics.physics import Vector2
+from src.physics.vectors import Vector2
 
 
 class OrbSpawner(Spawner):

@@ -7,7 +7,7 @@ from src.entities.echo import Echo, EchoSpawner
 
 from src.settings import ECHO_SPAWN_DELAY, DIFF_ECHO_DELAY_MULT, DIFF_EVERY
 
-from src.physics.physics import Vector2
+from src.physics.vectors import Vector2
 
 
 class EchoSpawnerSpawner(Spawner):

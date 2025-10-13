@@ -5,14 +5,22 @@ from collections import deque
 from src.settings import *
 from src.utility import clamp
 from src.physics.colision_manager import collision_manager
+from src.physics.physics_system import PhysicsSystem
 
 from src.entities.player import Player
+from src.render.camera import Camera
+from src.render.canvas import Canvas
 from src.sound_manager import SoundManager
 from src.event_system import EventSystem
 
 from src.spawners import spawner_register
 from src.workers import worker_register
 from src.visual_effects.visual_effects_registr import VisualEffectRegister
+
+from src.physics.transform import Transform, TransformUI
+from src.physics.vectors import Vector2
+
+from src.ui.label import Label
 
 
 class Game:
@@ -26,19 +34,21 @@ class Game:
 
         self.player = None
         self.entities = []
+        self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
+        self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
         self.running = False
         self.game_over = False
         self.time = 0.0
         self.score = 0.0
         self.high = 0
 
-        EventSystem.trigger_event("start")
-
     def reset(self):
         collision_manager.reset()
 
         self.player = Player()
         self.entities = []
+        self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
+        self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
         self.running = True
         self.game_over = False
         self.time = 0.0
@@ -48,12 +58,14 @@ class Game:
         spawner_register.reset_spawners()
         worker_register.reset_workers()
 
-        SoundManager.load_and_run_sound(path="../assets/music/untitled.mp3", loops=-1)
+        SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
         EventSystem.trigger_event("reset")
+
+        self.canvases[0].add_ui(Label(text="fff", transform=TransformUI(size_px=Vector2(100, 100))))
 
     def load_highscore(self):
         try:
-            with open("../shadow_echo_highscore.txt", "r") as f:
+            with open("shadow_echo_highscore.txt", "r") as f:
                 return int(f.read().strip())
         except Exception:
             return 0
@@ -78,6 +90,8 @@ class Game:
         for e in self.entities:
             e.update(dt * slow_factor)
 
+        PhysicsSystem.update_all(dt*slow_factor)
+
         EventSystem.trigger_event("update")  # call update event
 
         spawner_register.spawners_update(dt*slow_factor)
@@ -94,16 +108,34 @@ class Game:
         caller = stack[1]  # [0] — это текущий кадр, [1] — кто вызвал
         print(f"Игра закончена от: {caller.function}, в файле: {caller.filename}, строка: {caller.lineno}")
         print(self.entities)
+        EventSystem.trigger_event("end_game")
 
     def draw(self, dt, slow_factor):
         self.screen.fill(BLACK)
         VisualEffectRegister.under_draw(self.screen, dt*slow_factor)
 
         for en in self.entities:
-            en.draw(self.screen)
+            result = en.draw(self.screen)
+            if result is None:
+                continue  # ничего не рисуем
+            # Если draw вернул только Surface
+            if isinstance(result, pygame.Surface):
+                surface = result
+                self.camera.add_to_draw_queue(surface, en)
+            # Если draw вернул (Surface, alignment)
+            elif isinstance(result, tuple):
+                surface, alignment = result
+                self.camera.add_to_draw_queue(surface, en, alignment=alignment)
+
+        self.camera.drawing_queue(self.screen)
 
         self.player.draw(self.screen)
+
         VisualEffectRegister.draw(self.screen, dt*slow_factor)
+
+        for canvas in self.canvases:
+            canvas.add_to_draw_queue_all_ui()
+            canvas.drawing_queue(self.screen)
         # UI
         bar_w, bar_h = 180, 10
         # focus bar
@@ -118,15 +150,10 @@ class Game:
 
         VisualEffectRegister.over_draw(self.screen, dt*slow_factor)
 
-        if self.game_over:
-            s1 = self.big_font.render("GAME OVER", True, WHITE)
-            s2 = self.font.render("R - restart    ESC - quit", True, GRAY)
-            s3 = self.font.render("Tip: Grab green orbs to cash-in echoes!", True, GRAY)
-            self.screen.blit(s1, (CENTER[0] - s1.get_width()//2, CENTER[1] - 60))
-            self.screen.blit(s2, (CENTER[0] - s2.get_width()//2, CENTER[1]))
-            self.screen.blit(s3, (CENTER[0] - s3.get_width()//2, CENTER[1] + 26))
-
         pygame.display.flip()
+
+    def start(self):
+        EventSystem.trigger_event("start")
 
     def run(self):
         slow_factor = 1.0
@@ -135,9 +162,11 @@ class Game:
             # Input
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    print(f"entity in game {len(self.entities)}")
                     self.running = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
+                        print(f"entity in game {len(self.entities)}")
                         self.running = False
                     elif event.key == pygame.K_r:
                         self.reset()

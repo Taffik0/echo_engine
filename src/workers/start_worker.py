@@ -4,7 +4,7 @@ from .worker_register import add_worker
 from .worker import Worker
 
 
-class StartWarker(Worker):
+class StartWorker(Worker):
     def __init__(self):
         super().__init__()
         EventSystem.reg_event("start", self.start)
@@ -13,5 +13,5 @@ class StartWarker(Worker):
         print("game started")
 
 
-worker = StartWarker()
+worker = StartWorker()
 add_worker(worker)

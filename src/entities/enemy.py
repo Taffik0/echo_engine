@@ -7,6 +7,9 @@ from src.game_manager import GameManager
 from src.entities.entity import Entity
 from src.physics.colliders import CircleCollider
 from src.physics.colision_manager import collision_manager
+from src.physics.physics_system import PhysicsSystem, PhysicsBody
+
+from src.physics.vectors import Vector2
 
 
 class Enemy(Entity):
@@ -24,7 +27,8 @@ class Enemy(Entity):
             owner=self,
             radius=self.r,
             group="enemy",
-            mask=["player"]  # с кем взаимодействует
+            mask=["player", "enemy", "echo"],  # с кем взаимодействует
+            touchable=True
         )
         collision_manager.register(self.collider)
 
@@ -47,8 +51,9 @@ class Enemy(Entity):
     def start(self):
         pass
 
-    def on_collision(self, other):
-        GameManager.game.end_game()
+    def on_collision(self, other: Entity):
+        if "player" in other.tags:
+            GameManager.game.end_game()
 
 
 class FastEnemy(Enemy):

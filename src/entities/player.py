@@ -5,8 +5,9 @@ from src.settings import *
 from src.utility import normalize, clamp
 from src.physics.colliders import CircleCollider
 from src.physics.colision_manager import collision_manager
-from src.physics.physics import Vector2
+from src.physics.vectors import Vector2
 from src.physics.transform import Transform
+from src.render import surface_manager
 
 from src.entities.entity import Entity
 
@@ -20,12 +21,14 @@ class Player(Entity):
         self.dash_t = 0.0
         self.alive = True
         self.focus = FOCUS_MAX * 0.6
+        self.tags = ["player"]
 
         self.collider = CircleCollider(
             owner=self,
             radius=self.r,
             group="player",
-            mask=["enemy", "orb", "echo"]  # с кем взаимодействует
+            mask=["enemy", "orb", "echo"],  # с кем взаимодействует
+            touchable=True
         )
         collision_manager.register(self.collider)
 
@@ -54,6 +57,7 @@ class Player(Entity):
             self.dash_cd = DASH_COOLDOWN
 
     def draw(self, surf):
+
         x = int(self.transform.position.x)
         y = int(self.transform.position.y)
         # основной круг игрока

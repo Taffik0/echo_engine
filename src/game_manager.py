@@ -1,7 +1,7 @@
 import inspect
 
 from src.physics.colision_manager import collision_manager
-from src.physics.physics import Vector2
+from src.physics.vectors import Vector2
 from src.physics.transform import Transform
 
 
@@ -44,6 +44,10 @@ class GameManager:
     @classmethod
     def get_entity_by_tag(cls, tag):
         return [e for e in cls.game.entities if tag in e.tags]
+
+    @classmethod
+    def get_canvases(cls):
+        return cls.game.canvases
 
 
 class ComponentManager:

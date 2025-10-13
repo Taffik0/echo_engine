@@ -1,6 +1,6 @@
 import random
 
-from src.physics.physics import Vector2
+from src.physics.vectors import Vector2
 from src.game_manager import GameManager
 
 from src.entities.entity import EntitySpawner, LifeTimeEntity

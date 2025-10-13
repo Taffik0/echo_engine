@@ -8,7 +8,7 @@ from src.game_manager import GameManager
 
 from src.spawners import spawner_register
 
-from src.physics.physics import Vector2
+from src.physics.vectors import Vector2
 
 
 class EnemySpawner(Spawner):
