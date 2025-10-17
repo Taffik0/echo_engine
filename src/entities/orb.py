@@ -7,7 +7,7 @@ from src.settings import *
 from src.entities.entity import Entity, LifeTimeEntity
 
 from src.physics.colliders import CircleCollider
-from src.physics.colision_manager import collision_manager
+from src.physics.collision_system import collision_manager
 from src.game_manager import GameManager
 
 

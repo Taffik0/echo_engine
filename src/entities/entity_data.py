@@ -2,6 +2,8 @@ from pygame import Surface
 
 from src.physics.transform import Transform
 
+from src.event_system import LocalEventSystem
+
 
 class EntityData:
 
@@ -12,28 +14,55 @@ class EntityData:
         self.color = (0, 0, 0)
         self.visible = True
         self.transform: Transform = transform if transform is not None else Transform()
-        self.components = {}
+        self.components = []
+        self.event_system = LocalEventSystem()
 
     def update(self, dt):
+        """Вызывается при обновлении"""
         pass
 
     def draw(self, surf) -> Surface:
+        """Вызывается при отрисовке"""
         pass
 
     def start(self):
+        """Вызывается при старте"""
         pass
 
     def destroy(self):
+        """Метод уничтожения"""
         pass
 
     def on_collision(self, other):
+        """Вызывается при столкновении"""
         pass
 
     def add_component(self, component):
-        self.components[type(component)] = component
+        """Добавляет компонент (без ограничения по типу)."""
+        self.components.append(component)
+        component.owner = self
+        component.start()
 
     def has_component(self, comp_type):
-        return comp_type in self.components
+        """Проверяет, есть ли хотя бы один компонент указанного типа."""
+        return any(isinstance(c, comp_type) for c in self.components)
+
+    def get_components(self, comp_type):
+        """Возвращает список всех компонентов указанного типа."""
+        return [c for c in self.components if isinstance(c, comp_type)]
 
     def get_component(self, comp_type):
-        return self.components.get(comp_type, None)
+        """Возвращает первый компонент указанного типа (для удобства)."""
+        for c in self.components:
+            if isinstance(c, comp_type):
+                return c
+        return None
+
+    def remove_component(self, component):
+        """Удаляет конкретный экземпляр компонента."""
+        if component in self.components:
+            self.components.remove(component)
+
+    def remove_components_of_type(self, comp_type):
+        """Удаляет все компоненты указанного типа."""
+        self.components = [c for c in self.components if not isinstance(c, comp_type)]

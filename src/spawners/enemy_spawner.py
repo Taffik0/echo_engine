@@ -10,6 +10,8 @@ from src.spawners import spawner_register
 
 from src.physics.vectors import Vector2
 
+from src.components.my_component import MyComponent
+
 
 class EnemySpawner(Spawner):
     def __init__(self, diff_enemy_speed_add, *args, **kwargs):
@@ -29,6 +31,7 @@ class EnemySpawner(Spawner):
             x, y = -enemy.r - 4, random.uniform(0, HEIGHT)
         else:
             x, y = WIDTH + enemy.r + 4, random.uniform(0, HEIGHT)
+        enemy.add_component(MyComponent())
         GameManager.spawn_entity(enemy, position=Vector2(x, y))
 
     def diff_add(self):

@@ -8,7 +8,7 @@ class OrbFactory:
     def create_entity():
         record = random.choices(
             orb_register.records,
-            weights=orb_register.weights,  # <- тут должно быть weights
+            weights=orb_register.weights,
             k=1
         )[0]
         orb = record.entity()

@@ -3,7 +3,7 @@ from .colliders import Collider
 from .vectors import Vector2
 
 
-class CollisionManager:
+class CollisionSystem:
     def __init__(self):
         self.colliders: list[Collider] = []
 
@@ -45,4 +45,4 @@ class CollisionManager:
         self.colliders = []
 
 
-collision_manager = CollisionManager()
+collision_manager = CollisionSystem()

@@ -4,8 +4,9 @@ from collections import deque
 
 from src.settings import *
 from src.utility import clamp
-from src.physics.colision_manager import collision_manager
+from src.physics.collision_system import collision_manager
 from src.physics.physics_system import PhysicsSystem
+from src.systems.modifier.modifier_system import ModifierSystem
 
 from src.entities.player import Player
 from src.render.camera import Camera
@@ -81,7 +82,7 @@ class Game:
         if self.game_over:
             return
         self.time += dt
-
+        ModifierSystem.update(dt)
         # Player update
         self.player.update(dt)
         self.score += 60*dt  # slow earn when time-slow active

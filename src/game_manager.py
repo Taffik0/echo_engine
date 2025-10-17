@@ -1,6 +1,6 @@
 import inspect
 
-from src.physics.colision_manager import collision_manager
+from src.physics.collision_system import collision_manager
 from src.physics.vectors import Vector2
 from src.physics.transform import Transform
 
@@ -50,7 +50,7 @@ class GameManager:
         return cls.game.canvases
 
 
-class ComponentManager:
+class ComponentsManager:
 
     @classmethod
     def get_entities_with_components(cls, component_types: list):

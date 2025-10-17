@@ -6,7 +6,7 @@ from src.utility import normalize, clamp
 from src.game_manager import GameManager
 from src.entities.entity import Entity
 from src.physics.colliders import CircleCollider
-from src.physics.colision_manager import collision_manager
+from src.physics.collision_system import collision_manager
 from src.physics.physics_system import PhysicsSystem, PhysicsBody
 
 from src.physics.vectors import Vector2

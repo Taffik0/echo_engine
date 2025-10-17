@@ -4,7 +4,7 @@ import math
 from src.settings import *
 from src.utility import normalize, clamp
 from src.physics.colliders import CircleCollider
-from src.physics.colision_manager import collision_manager
+from src.physics.collision_system import collision_manager
 from src.physics.vectors import Vector2
 from src.physics.transform import Transform
 from src.render import surface_manager

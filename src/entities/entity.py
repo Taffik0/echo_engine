@@ -9,30 +9,7 @@ from .entity_data import EntityData
 
 
 class Entity(EntityData):
-
-    def update(self, dt):
-        pass
-
-    def draw(self, surf) -> Surface:
-        pass
-
-    def start(self):
-        pass
-
-    def destroy(self):
-        pass
-
-    def on_collision(self, other):
-        pass
-
-    def add_component(self, component):
-        self.components[type(component)] = component
-
-    def has_component(self, comp_type):
-        return comp_type in self.components
-
-    def get_component(self, comp_type):
-        return self.components.get(comp_type, None)
+    pass
 
 
 class LifeTimeEntity(Entity):
