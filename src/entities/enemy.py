@@ -48,9 +48,6 @@ class Enemy(Entity):
         # small eye
         pygame.draw.circle(surf, BLACK, (int(position.x), int(position.y)), 3)
 
-    def start(self):
-        pass
-
     def on_collision(self, other: Entity):
         if "player" in other.tags:
             GameManager.game.end_game()
@@ -76,6 +73,7 @@ class FastEnemy(Enemy):
             self.destroy()
 
     def start(self):
+        super().start()
         position = self.transform.position
         player = GameManager.game.player
         player_position = player.transform.position

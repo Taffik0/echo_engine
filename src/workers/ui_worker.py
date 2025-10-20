@@ -1,4 +1,4 @@
-from src.event_system import EventSystem
+from src.systems.event_system import EventSystem
 
 from .worker_register import add_worker
 from .worker import Worker

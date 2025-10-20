@@ -21,8 +21,27 @@ class AttributeModifier:
         v = self.ref.get()
         if self.op == "mul":
             self.ref.set(v * self.value)
+        elif self.op == "add":
+            self.ref.set(v + self.value)
 
-    def cansel(self):
+    def undo(self):
         v = self.ref.get()
         if self.op == "mul":
             self.ref.set(v / self.value)
+        elif self.op == "add":
+            self.ref.set(v - self.value)
+
+    def preview(self):
+        v = self.ref.get()
+        if self.op == "mul":
+            return v * self.value
+        elif self.op == "add":
+            return v + self.value
+        return v
+
+    def undo_preview(self):
+        v = self.ref.get()
+        if self.op == "mul":
+            return v / self.value
+        elif self.op == "add":
+            return v - self.value

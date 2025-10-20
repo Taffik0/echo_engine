@@ -1,4 +1,4 @@
-from attribute_modifier import AttributeModifier
+from .attribute_modifier import AttributeModifier
 
 
 class ModifierSystem:

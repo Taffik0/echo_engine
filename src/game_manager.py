@@ -4,6 +4,8 @@ from src.physics.collision_system import collision_manager
 from src.physics.vectors import Vector2
 from src.physics.transform import Transform
 
+from src.render.canvas import Canvas
+
 
 class GameManager:
     game = None
@@ -46,7 +48,7 @@ class GameManager:
         return [e for e in cls.game.entities if tag in e.tags]
 
     @classmethod
-    def get_canvases(cls):
+    def get_canvases(cls) -> list[Canvas]:
         return cls.game.canvases
 
 

@@ -2,7 +2,7 @@ from pygame import Surface
 
 from src.physics.transform import Transform
 
-from src.event_system import LocalEventSystem
+from src.systems.event_system import LocalEventSystem
 
 
 class EntityData:
@@ -16,6 +16,7 @@ class EntityData:
         self.transform: Transform = transform if transform is not None else Transform()
         self.components = []
         self.event_system = LocalEventSystem()
+        self.is_started = False
 
     def update(self, dt):
         """Вызывается при обновлении"""
@@ -26,8 +27,9 @@ class EntityData:
         pass
 
     def start(self):
-        """Вызывается при старте"""
-        pass
+        self.is_started = True
+        for component in self.components:
+            component.start()
 
     def destroy(self):
         """Метод уничтожения"""
@@ -41,7 +43,8 @@ class EntityData:
         """Добавляет компонент (без ограничения по типу)."""
         self.components.append(component)
         component.owner = self
-        component.start()
+        if self.is_started:
+            component.start()
 
     def has_component(self, comp_type):
         """Проверяет, есть ли хотя бы один компонент указанного типа."""

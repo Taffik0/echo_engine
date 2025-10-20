@@ -1,6 +1,5 @@
 import inspect
 import pygame
-from collections import deque
 
 from src.settings import *
 from src.utility import clamp
@@ -12,7 +11,7 @@ from src.entities.player import Player
 from src.render.camera import Camera
 from src.render.canvas import Canvas
 from src.sound_manager import SoundManager
-from src.event_system import EventSystem
+from src.systems.event_system import EventSystem
 
 from src.spawners import spawner_register
 from src.workers import worker_register
@@ -20,8 +19,6 @@ from src.visual_effects.visual_effects_registr import VisualEffectRegister
 
 from src.physics.transform import Transform, TransformUI
 from src.physics.vectors import Vector2
-
-from src.ui.label import Label
 
 
 class Game:
@@ -31,19 +28,17 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("consolas", 20)
-        self.big_font = pygame.font.SysFont("consolas", 48, bold=True)
 
         self.player = None
         self.entities = []
         self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
         self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
-        self.running = False
+        self.running = True
         self.game_over = False
         self.time = 0.0
-        self.score = 0.0
-        self.high = 0
 
     def reset(self):
+        print("reset")
         collision_manager.reset()
 
         self.player = Player()
@@ -53,8 +48,6 @@ class Game:
         self.running = True
         self.game_over = False
         self.time = 0.0
-        self.score = 0.0
-        self.high = self.load_highscore()
 
         spawner_register.reset_spawners()
         worker_register.reset_workers()
@@ -62,21 +55,6 @@ class Game:
         SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
         EventSystem.trigger_event("reset")
 
-        self.canvases[0].add_ui(Label(text="fff", transform=TransformUI(size_px=Vector2(100, 100))))
-
-    def load_highscore(self):
-        try:
-            with open("shadow_echo_highscore.txt", "r") as f:
-                return int(f.read().strip())
-        except Exception:
-            return 0
-
-    def save_highscore(self):
-        try:
-            with open("../shadow_echo_highscore.txt", "w") as f:
-                f.write(str(self.high))
-        except Exception:
-            pass
 
     def update(self, dt, slow_factor):
         if self.game_over:
@@ -85,7 +63,6 @@ class Game:
         ModifierSystem.update(dt)
         # Player update
         self.player.update(dt)
-        self.score += 60*dt  # slow earn when time-slow active
 
         # Entity update
         for e in self.entities:
@@ -103,8 +80,6 @@ class Game:
 
     def end_game(self):
         self.game_over = True
-        self.high = max(self.high, int(self.score))
-        self.save_highscore()
         stack = inspect.stack()
         caller = stack[1]  # [0] — это текущий кадр, [1] — кто вызвал
         print(f"Игра закончена от: {caller.function}, в файле: {caller.filename}, строка: {caller.lineno}")
@@ -145,15 +120,12 @@ class Game:
         pygame.draw.rect(self.screen, FOCUS_COLOR, (15, 15, int(bar_w * ratio), bar_h), border_radius=6)
         self.screen.blit(self.font.render("FOCUS", True, WHITE), (15, 28))
 
-        # score
-        self.screen.blit(self.font.render(f"Score: {int(self.score)}", True, WHITE), (WIDTH - 170, 12))
-        self.screen.blit(self.font.render(f"Best:  {self.high}", True, GRAY), (WIDTH - 170, 32))
-
         VisualEffectRegister.over_draw(self.screen, dt*slow_factor)
 
         pygame.display.flip()
 
     def start(self):
+        EventSystem.trigger_event("init")
         EventSystem.trigger_event("start")
 
     def run(self):
