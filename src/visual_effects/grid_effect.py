@@ -13,7 +13,3 @@ class GridEffect(VisualEffect):
             pygame.draw.line(surface, (30, 32, 36), (x, 0), (x, HEIGHT))
         for y in range(0, HEIGHT, gap):
             pygame.draw.line(surface, (30, 32, 36), (0, y), (WIDTH, y))
-
-
-grid_effect = GridEffect()
-VisualEffectRegister.add(grid_effect, -1)

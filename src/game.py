@@ -2,12 +2,10 @@ import inspect
 import pygame
 
 from src.settings import *
-from src.utility import clamp
 from src.physics.collision_system import collision_manager
 from src.physics.physics_system import PhysicsSystem
 from src.systems.modifier.modifier_system import ModifierSystem
 
-from src.entities.player import Player
 from src.render.camera import Camera
 from src.render.canvas import Canvas
 from src.sound_manager import SoundManager
@@ -17,19 +15,17 @@ from src.spawners import spawner_register
 from src.workers import worker_register
 from src.visual_effects.visual_effects_registr import VisualEffectRegister
 
-from src.physics.transform import Transform, TransformUI
+from src.physics.transform import Transform
 from src.physics.vectors import Vector2
 
 
 class Game:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Shadow Echo — Endless Mini-Arcade")
+        pygame.display.set_caption("Game")
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont("consolas", 20)
 
-        self.player = None
         self.entities = []
         self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
         self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
@@ -41,7 +37,6 @@ class Game:
         print("reset")
         collision_manager.reset()
 
-        self.player = Player()
         self.entities = []
         self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
         self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
@@ -52,7 +47,6 @@ class Game:
         spawner_register.reset_spawners()
         worker_register.reset_workers()
 
-        SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
         EventSystem.trigger_event("reset")
 
 
@@ -61,8 +55,6 @@ class Game:
             return
         self.time += dt
         ModifierSystem.update(dt)
-        # Player update
-        self.player.update(dt)
 
         # Entity update
         for e in self.entities:
@@ -105,20 +97,11 @@ class Game:
 
         self.camera.drawing_queue(self.screen)
 
-        self.player.draw(self.screen)
-
         VisualEffectRegister.draw(self.screen, dt*slow_factor)
 
         for canvas in self.canvases:
             canvas.add_to_draw_queue_all_ui()
             canvas.drawing_queue(self.screen)
-        # UI
-        bar_w, bar_h = 180, 10
-        # focus bar
-        pygame.draw.rect(self.screen, (40, 60, 80), (15, 15, bar_w, bar_h), border_radius=6)
-        ratio = clamp(self.player.focus / FOCUS_MAX, 0.0, 1.0)
-        pygame.draw.rect(self.screen, FOCUS_COLOR, (15, 15, int(bar_w * ratio), bar_h), border_radius=6)
-        self.screen.blit(self.font.render("FOCUS", True, WHITE), (15, 28))
 
         VisualEffectRegister.over_draw(self.screen, dt*slow_factor)
 
@@ -143,21 +126,9 @@ class Game:
                         self.running = False
                     elif event.key == pygame.K_r:
                         self.reset()
-                    elif event.key == pygame.K_SPACE and not self.game_over:
-                        self.player.try_dash()
 
             keys = pygame.key.get_pressed()
-            if not self.game_over:
-                self.player.input(keys)
-
-            # Focus slow-time (hold SHIFT)
             slow_factor = 1.0
-            if not self.game_over and (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]):
-                if self.player.focus > 0:
-                    slow_factor = MIN_SLOW
-                    self.player.focus = clamp(self.player.focus - FOCUS_DRAIN * dt, 0, FOCUS_MAX)
-            else:
-                self.player.focus = clamp(self.player.focus + FOCUS_REGEN * dt, 0, FOCUS_MAX)
 
             self.update(dt, slow_factor)
             self.draw(dt, slow_factor)
