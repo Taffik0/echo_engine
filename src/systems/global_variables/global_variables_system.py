@@ -1,4 +1,5 @@
 class GlobalVariablesSystem:
+    """Создает и управляет глобальными переменными"""
     variables = {}
 
     @classmethod
