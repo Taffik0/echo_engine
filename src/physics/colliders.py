@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 
 from src.physics.vectors import Vector2
 
-from .colision_func import aabb_penetration, circle_penetration
+from .colision_func import aabb_penetration, circle_penetration, circle_rect_penetration
 from src.entities.entity_data import EntityData
 
 
@@ -42,14 +42,10 @@ class CircleCollider(Collider):
         other_position = other.owner.transform.position
         return circle_penetration(position, self.radius, other_position, other.radius)
 
-    def check_collision_with_rect(self, rect):
-        cx, cy = self.owner.transform.position.x, self.owner.transform.position.y
-        # ближайшая точка на прямоугольнике
-        nearest_x = max(rect.x, min(cx, rect.x + rect.width))
-        nearest_y = max(rect.y, min(cy, rect.y + rect.height))
-        dx = cx - nearest_x
-        dy = cy - nearest_y
-        return dx*dx + dy*dy <= self.radius * self.radius
+    def check_collision_with_rect(self, other) -> Tuple[bool, Optional[Vector2], float]:
+        position = self.owner.transform.position
+        other_position = other.owner.transform.position
+        return circle_rect_penetration(position, self.radius, other.width, other.height, other.x, other.y)
 
     def get_projection(self, axis='x'):
         if axis == "x":
