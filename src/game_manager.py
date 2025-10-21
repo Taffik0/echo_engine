@@ -12,6 +12,7 @@ class GameManager:
 
     @classmethod
     def destroy_me(cls, entity):
+        """Уничтожает сущность"""
         collection = cls.game.entities
         if collection and entity in collection:
             if entity.collider:
@@ -20,10 +21,12 @@ class GameManager:
 
     @classmethod
     def destroy_collider(cls, collider):
+        """Уничтожает коллайдер"""
         collision_manager.unregister(collider)
 
     @classmethod
     def hard_remove(cls, entity, entity_type: str):
+        """Уничтожает сущность без вызова destroy"""
         if cls.game.entities and entity in cls.game.entities:
             if entity.collider:
                 cls.destroy_collider(entity.collider)
@@ -31,11 +34,13 @@ class GameManager:
 
     @classmethod
     def hard_remove_list(cls, entity_list, entity_type: str):
+        """Уничтожает список сущностей без вызова destroy"""
         for entity in entity_list[:]:  # копия списка, чтобы безопасно удалять
             cls.hard_remove(entity, entity_type)
 
     @classmethod
     def spawn_entity(cls, entity, transform: Transform = None, position: Vector2 = None):
+        """Спавнит сущность"""
         if transform:
             entity.transform = transform
         elif position:
@@ -45,10 +50,12 @@ class GameManager:
 
     @classmethod
     def get_entity_by_tag(cls, tag):
+        """Возвращает список сущностей с определенным тегом"""
         return [e for e in cls.game.entities if tag in e.tags]
 
     @classmethod
     def get_canvases(cls) -> list[Canvas]:
+        """Возвращает список канвасов"""
         return cls.game.canvases
 
 

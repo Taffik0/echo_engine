@@ -47,9 +47,23 @@ class UserInputSystem:
 
     @classmethod
     def registration_event(cls, key_event: KeyEvent):
+        """Подписывание на событие пользовательского ввода"""
         key = key_event.key
         if key in cls.key_events:
             cls.key_events[key].append(key_event)
         else:
             cls.key_events[key] = [key_event]
+
+    @classmethod
+    def unregister_event(cls, key_event: KeyEvent):
+        """Аннулирование подписи на событие пользовательского ввода"""
+        cls.key_events.pop(key_event)
+
+    @classmethod
+    def get_key(cls, key):
+        """Получение клавиши ввода если такая есть"""
+        if key in cls.keys:
+            return cls.keys[key]
+        else:
+            return None
 
