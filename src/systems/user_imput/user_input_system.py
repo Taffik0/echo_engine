@@ -1,4 +1,17 @@
 import pygame
+import inspect
+
+from src.settings import KEY_INPUT_LOG
+
+
+def call_with_available_args(method, **possible_args):
+    # получаем имена параметров метода
+    sig = inspect.signature(method)
+    params = sig.parameters
+
+    # оставляем только те аргументы, которые есть в сигнатуре
+    filtered_args = {k: v for k, v in possible_args.items() if k in params}
+    return method(**filtered_args)
 
 
 class InputKey:
@@ -25,24 +38,26 @@ class UserInputSystem:
         pressed = pygame.key.get_pressed()
         for key_code, is_pressed in enumerate(pressed):
             if is_pressed:
+                if KEY_INPUT_LOG:
+                    print(key_code)
                 if key_code in cls.keys:
                     cls.keys[key_code].time += dt
                     if key_code in cls.key_events:
                         for event in cls.key_events[key_code]:
-                            if not event.on_down:
-                                event.method(cls.keys[key_code].time)
+                            if event.on_hold:
+                                call_with_available_args(event.method, time=cls.keys[key_code].time, dt=dt)
                 else:
                     cls.keys[key_code] = InputKey(key_code, dt)
                     if key_code in cls.key_events:
                         for event in cls.key_events[key_code]:
-                            if event.on_hold:
-                                event.method(cls.keys[key_code].time)
+                            if event.on_down:
+                                call_with_available_args(event.method, time=cls.keys[key_code].time, dt=dt)
             else:
                 if key_code in cls.keys:
                     if key_code in cls.key_events:
                         for event in cls.key_events[key_code]:
                             if getattr(event, "on_up", False):
-                                event.method(cls.keys[key_code].time)
+                                call_with_available_args(event.method, time=cls.keys[key_code].time, dt=dt)
                     cls.keys.pop(key_code)
 
     @classmethod

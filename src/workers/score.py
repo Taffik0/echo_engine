@@ -1,5 +1,5 @@
 from .worker import Worker
-from .worker_register import add_worker
+from .worker_register import WorkerRegister
 from src.systems.global_variables import *
 from src.systems.event_system import EventSystem
 from src.game_manager import GameManager
@@ -15,7 +15,7 @@ class ScoreWorker(Worker):
     def __init__(self):
         super().__init__()
         GlobalVariablesSystem.set_or_create("score", 0)
-        GlobalVariablesSystem.set_or_create("high", 0)
+        GlobalVariablesSystem.set_or_create("high", 0, is_saving=True)
         EventSystem.reg_event("init", self.init)
         EventSystem.reg_event("reset", self.reset)
         EventSystem.reg_event("end_game", self.end_game)
@@ -27,14 +27,13 @@ class ScoreWorker(Worker):
         self.canvas = GameManager.get_canvases()[0]
         canvas_size = self.canvas.get_global_size()
         score = GlobalVariablesSystem.get_variable("score")
-        high = self.load_highscore()
+        high = GlobalVariablesSystem.get_variable("high")
         self.score_lb = Label(text=f"Score: {score}", font_size=20, size_by_font=True,
                               transform=TransformUI(position=Vector2(canvas_size.x - 170, 12)))
         self.high_lb = Label(text=f"Best:  {high}", font_size=20, size_by_font=True, text_color=GRAY,
                              transform=TransformUI(position=Vector2(canvas_size.x - 170, 32)))
         self.canvas.add_ui(self.score_lb)
         self.canvas.add_ui(self.high_lb)
-        GlobalVariablesSystem.set_or_create("high", high)
 
     def reset(self):
         self.canvas = GameManager.get_canvases()[0]
@@ -43,7 +42,6 @@ class ScoreWorker(Worker):
             self.score_lb.text = f"Score: {int(0)}"
             self.canvas.add_ui(self.score_lb)
             self.canvas.add_ui(self.high_lb)
-        GlobalVariablesSystem.set_or_create("high", self.load_highscore())
 
     def update(self, dt):
         score = GlobalVariablesSystem.get_variable("score")
@@ -51,28 +49,13 @@ class ScoreWorker(Worker):
         GlobalVariablesSystem.set_or_create("score", score)
         self.score_lb.text = f"Score: {int(score)}"
 
-    def load_highscore(self):
-        try:
-            with open("shadow_echo_highscore.txt", "r") as f:
-                return int(f.read().strip())
-        except Exception:
-            return 0
-
-    def save_highscore(self, high):
-        try:
-            with open("../shadow_echo_highscore.txt", "w") as f:
-                f.write(str(high))
-        except Exception:
-            pass
-
     def end_game(self):
         score = GlobalVariablesSystem.get_variable("score")
         high = GlobalVariablesSystem.get_variable("high")
         high = max(high, int(score))
-        self.save_highscore(high)
         GlobalVariablesSystem.set_or_create("high", high)
         if self.high_lb:
             self.high_lb.text = f"Best:  {high}"
 
 
-add_worker(ScoreWorker())
+WorkerRegister.add_worker(ScoreWorker())

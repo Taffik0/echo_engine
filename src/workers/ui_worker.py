@@ -1,6 +1,6 @@
 from src.systems.event_system import EventSystem
 
-from .worker_register import add_worker
+from .worker_register import WorkerRegister
 from .worker import Worker
 
 from src.game_manager import GameManager
@@ -29,7 +29,7 @@ class UIWorker(Worker):
         ratio = clamp(self.player.focus / FOCUS_MAX, 0.0, 1.0)
         pygame.draw.rect(self.screen, FOCUS_COLOR, (15, 15, int(bar_w * ratio), bar_h), border_radius=6)
         self.screen.blit(self.font.render("FOCUS", True, WHITE), (15, 28))
-
+    
         # score
         self.screen.blit(self.font.render(f"Score: {int(self.score)}", True, WHITE), (WIDTH - 170, 12))
         self.screen.blit(self.font.render(f"Best:  {self.high}", True, GRAY), (WIDTH - 170, 32))"""
@@ -56,4 +56,4 @@ class UIWorker(Worker):
 
 
 worker = UIWorker()
-add_worker(worker)
+WorkerRegister.add_worker(worker)

@@ -7,9 +7,11 @@ from src.physics.colliders import CircleCollider
 from src.physics.collision_system import collision_manager
 from src.physics.vectors import Vector2
 from src.physics.transform import Transform
-from src.render import surface_manager
+from src.game_manager import GameManager
 
 from src.entities.entity import Entity
+
+from src.systems.user_imput.user_input_system import UserInputSystem, KeyEvent
 
 
 class Player(Entity):
@@ -31,8 +33,10 @@ class Player(Entity):
             touchable=True
         )
         collision_manager.register(self.collider)
+        UserInputSystem.registration_event(KeyEvent(44, self.try_dash, on_down=True))
 
-    def input(self, keys):
+    def input(self):
+        keys = pygame.key.get_pressed()
         ax = (keys[pygame.K_d] or keys[pygame.K_RIGHT]) - (keys[pygame.K_a] or keys[pygame.K_LEFT])
         ay = (keys[pygame.K_s] or keys[pygame.K_DOWN]) - (keys[pygame.K_w] or keys[pygame.K_UP])
         dx, dy = normalize(ax, ay)
@@ -42,6 +46,7 @@ class Player(Entity):
         self.vx, self.vy = dx * speed, dy * speed
 
     def update(self, dt):
+        dt = dt / GameManager.game.slow_factor
         self.dash_cd = max(0.0, self.dash_cd - dt)
         self.dash_t = max(0.0, self.dash_t - dt)
         # двигаем transform.position
@@ -50,6 +55,7 @@ class Player(Entity):
         # ограничение по границам
         self.transform.position.x = clamp(self.transform.position.x, self.r, WIDTH - self.r)
         self.transform.position.y = clamp(self.transform.position.y, self.r, HEIGHT - self.r)
+        self.input()
 
     def try_dash(self):
         if self.dash_cd <= 0.0:

@@ -2,6 +2,11 @@ WIDTH, HEIGHT = 900, 600
 CENTER = (WIDTH // 2, HEIGHT // 2)
 FPS = 60
 
+KEY_INPUT_LOG = False
+DEBUG = False
+
+REPLACE_WORKER_PREFAB = False
+
 # Colors
 WHITE = (240, 240, 240)
 BLACK = (15, 15, 18)

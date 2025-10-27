@@ -4,6 +4,8 @@ from src.game import Game
 from src.game_manager import GameManager
 import src.physics.collision_system
 
+from src.systems.global_variables import global_variables_system
+
 from src.spawners import spawner_register
 from src.workers import worker_register
 import src.visual_effects
@@ -18,6 +20,6 @@ import src.visual_effects
 if __name__ == "__main__":
     game = Game()
     GameManager.game = game
-    game.reset()  # init вызывается внутри reset
+    #game.reset()  # init вызывается внутри reset
     game.start()
     game.run()

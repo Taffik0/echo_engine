@@ -1,6 +1,3 @@
-from .worker_register import add_worker
-
-
 class Worker:
     def __init__(self):
         pass

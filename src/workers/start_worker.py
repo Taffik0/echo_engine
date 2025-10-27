@@ -1,6 +1,7 @@
 from src.systems.event_system import EventSystem
+from src.sound_manager import SoundManager
 
-from .worker_register import add_worker
+from .worker_register import WorkerRegister
 from .worker import Worker
 
 
@@ -11,7 +12,11 @@ class StartWorker(Worker):
 
     def start(self):
         print("game started")
+        SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
+
+    def reset(self):
+        SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
 
 
 worker = StartWorker()
-add_worker(worker)
+WorkerRegister.add_worker(worker)
