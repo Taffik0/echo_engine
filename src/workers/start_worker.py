@@ -4,6 +4,8 @@ from src.sound_manager import SoundManager
 from .worker_register import WorkerRegister
 from .worker import Worker
 
+from src.utils.class_holder import ClassHolder
+
 
 class StartWorker(Worker):
     def __init__(self):
@@ -18,5 +20,4 @@ class StartWorker(Worker):
         SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
 
 
-worker = StartWorker()
-WorkerRegister.add_worker(worker)
+WorkerRegister.add_worker_prefab(ClassHolder(StartWorker))

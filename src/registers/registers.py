@@ -1,4 +1,3 @@
-from src.entities.enemy import Enemy, FastEnemy
 
 
 class RegisterRecord:

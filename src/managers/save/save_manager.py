@@ -21,6 +21,11 @@ class SaveManager:
         file_path = Path(f"{SAVES_DIR}/{namespace}/{directory}/{file_name}.json")
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
+        if not file_path.exists():
+            return {}
         with open(file_path, "r", encoding="utf-8") as f:
-            data_loaded = json.load(f)
+            try:
+                data_loaded = json.load(f)
+            except json.JSONDecodeError:
+                return {}
             return data_loaded

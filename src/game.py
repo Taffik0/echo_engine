@@ -5,7 +5,6 @@ from src.physics.collision_system import collision_manager
 from src.physics.physics_system import PhysicsSystem
 from src.systems.modifier.modifier_system import ModifierSystem
 
-from src.entities.player import Player
 from src.render.camera import Camera
 from src.render.canvas import Canvas
 from src.systems.event_system import EventSystem
@@ -27,7 +26,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("consolas", 20)
 
-        self.player = Player()
+        self.player = None
         self.entities = []
         self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
         self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
@@ -42,7 +41,7 @@ class Game:
         print("reset")
         collision_manager.reset()
 
-        self.player = Player()
+        self.player = None
         self.entities = []
         self.camera = Camera(Transform(size=Vector2(900, 600)), 1)
         self.canvases = [Canvas(Transform(size=Vector2(900, 600)), 1)]
@@ -64,7 +63,8 @@ class Game:
         self.time += dt
         ModifierSystem.update(dt)
         # Player update
-        self.player.update(dt*slow_factor)
+        if self.player:
+            self.player.update(dt*slow_factor)
 
         # Entity update
         for e in self.entities:
@@ -111,7 +111,8 @@ class Game:
 
         self.camera.drawing_queue(self.screen)
 
-        self.player.draw(self.screen)
+        if self.player:
+            self.player.draw(self.screen)
 
         VisualEffectRegister.draw(self.screen, dt*slow_factor)
 
