@@ -14,10 +14,11 @@ class StartWorker(Worker):
 
     def start(self):
         print("game started")
-        SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
+        #SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
 
     def reset(self):
-        SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
+        pass
+        #SoundManager.load_and_run_sound(path="assets/music/untitled.wav", loops=-1)
 
 
 WorkerRegister.add_worker_prefab(ClassHolder(StartWorker))
