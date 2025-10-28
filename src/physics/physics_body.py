@@ -1,9 +1,9 @@
 from .vectors import Vector2
-from src.entities.entity import Entity
+from src.entities.entity import EntityData
 
 
 class PhysicsBody:
-    def __init__(self, owner: Entity, mass: float, velocity: Vector2 = Vector2(0, 0), acceleration: Vector2 = Vector2(0, 0),
+    def __init__(self, owner: EntityData, mass: float, velocity: Vector2 = Vector2(0, 0), acceleration: Vector2 = Vector2(0, 0),
                  forces: list[Vector2] = None, is_static: bool = False):
         self.owner = owner
         self.mass: float = mass

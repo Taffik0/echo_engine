@@ -44,5 +44,3 @@ class CollisionSystem:
     def reset(self):
         self.colliders = []
 
-
-collision_manager = CollisionSystem()

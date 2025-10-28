@@ -13,4 +13,3 @@ if __name__ == "__main__":
     GameManager.game = game
     #game.reset()  # init вызывается внутри reset
     game.start()
-    game.run()

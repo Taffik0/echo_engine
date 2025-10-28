@@ -4,7 +4,7 @@ from pygame import Surface
 from src.physics.transform import Transform
 from src.physics.vectors import Vector2
 
-from src.entities.entity import Entity
+from src.entities.entity_data import EntityData
 
 
 alignment_dict = {
@@ -44,7 +44,7 @@ class Camera:
                     self.transform.position.y + self.transform.size.y < entity_transform.position.y or
                     self.transform.position.y > entity_transform.position.y + y_size)
 
-    def add_to_draw_queue(self, surface: Surface, entity: Entity, alignment: str = "c"):
+    def add_to_draw_queue(self, surface: Surface, entity: EntityData, alignment: str = "c"):
         if self._surface_in_camera(surface, entity):
             x_size_px, y_size_px = surface.get_size()
             # вычисляем экранные координаты с учётом камеры

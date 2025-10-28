@@ -1,25 +1,23 @@
 import importlib
 import pkgutil
 
-spawners = []
 
+class SpawnersRegister:
+    def __init__(self):
+        self.spawners = []
 
-def add_spawner(spawner):
-    spawners.append(spawner)
+    def add_spawner(self, spawner):
+        self.spawners.append(spawner)
 
+    def remove_all_spawners(self):
+        self.spawners = []
 
-def remove_all_spawners():
-    global spawners
-    spawners = []
+    def reset_spawners(self):
+        for spawner in self.spawners:
+            spawner.reset()
 
-
-def reset_spawners():
-    for spawner in spawners:
-        spawner.reset()
-
-
-def spawners_update(dt):
-    for spawner in spawners:
-        spawner.update(dt)
+    def spawners_update(self, dt):
+        for spawner in self.spawners:
+            spawner.update(dt)
 
 

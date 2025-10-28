@@ -1,14 +1,21 @@
 import inspect
+from typing import TYPE_CHECKING
 
-from src.physics.collision_system import collision_manager
 from src.physics.vectors import Vector2
 from src.physics.transform import Transform
 
 from src.render.canvas import Canvas
 
+if TYPE_CHECKING:
+    from src.core.scene.scene import Scene
+
 
 class GameManager:
     game = None
+
+    @classmethod
+    def active_scene(cls) -> "Scene":
+        return cls.game.active_scene
 
     @classmethod
     def destroy_me(cls, entity):
@@ -22,10 +29,10 @@ class GameManager:
     @classmethod
     def destroy_collider(cls, collider):
         """Уничтожает коллайдер"""
-        collision_manager.unregister(collider)
+        cls.active_scene().collision_system.unregister(collider)
 
     @classmethod
-    def hard_remove(cls, entity, entity_type: str):
+    def hard_remove(cls, entity):
         """Уничтожает сущность без вызова destroy"""
         if cls.game.entities and entity in cls.game.entities:
             if entity.collider:
@@ -33,10 +40,10 @@ class GameManager:
             cls.game.entities.remove(entity)
 
     @classmethod
-    def hard_remove_list(cls, entity_list, entity_type: str):
+    def hard_remove_list(cls, entity_list):
         """Уничтожает список сущностей без вызова destroy"""
         for entity in entity_list[:]:  # копия списка, чтобы безопасно удалять
-            cls.hard_remove(entity, entity_type)
+            cls.hard_remove(entity)
 
     @classmethod
     def spawn_entity(cls, entity, transform: Transform = None, position: Vector2 = None):

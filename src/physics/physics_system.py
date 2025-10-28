@@ -6,21 +6,18 @@ from .physics_body import PhysicsBody
 
 
 class PhysicsSystem:
-    physics_bodies: list[PhysicsBody] = []
+    def __init__(self):
+        self.physics_bodies: list[PhysicsBody] = []
 
-    @classmethod
-    def register(cls, physics_body):
-        cls.physics_bodies.append(physics_body)
+    def register(self, physics_body):
+        self.physics_bodies.append(physics_body)
 
-    @classmethod
-    def unregister(cls, physics_body):
-        if physics_body in cls.physics_bodies:
-            cls.physics_bodies.remove(physics_body)
+    def unregister(self, physics_body):
+        if physics_body in self.physics_bodies:
+            self.physics_bodies.remove(physics_body)
 
-
-    @classmethod
-    def update_all(cls, dt):
-        for pb in cls.physics_bodies:
+    def update_all(self, dt):
+        for pb in self.physics_bodies:
             if pb.is_static:
                 continue
             if pb.mass == 0:

@@ -3,7 +3,7 @@ import pygame
 from src.settings import WIDTH, HEIGHT
 
 from .visual_effect import VisualEffect
-from .visual_effects_registr import VisualEffectRegister
+from .visual_effects_register import VisualEffectRegister
 
 
 class GridEffect(VisualEffect):
