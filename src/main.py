@@ -21,5 +21,6 @@ if __name__ == "__main__":
     game = Game()
     GameManager.game = game
     #game.reset()  # init вызывается внутри reset
+    import src.ui.xml_ui_reader
     game.start()
     game.run()

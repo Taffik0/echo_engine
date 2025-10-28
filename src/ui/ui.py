@@ -11,14 +11,18 @@ from src.render.alignment import alignment_dict
 
 class UI:
     def __init__(self, layer: int = 0, transform: TransformUI = None, draw_alignment: str = "ld", alignment: str = "ld",
-                 parent: Optional["UI"] = None):
+                 parent: Optional["UI"] = None, children: Optional[list["UI"]] = None):
         self.transform = transform
         if transform is None:
             self.transform = TransformUI(alignment=alignment, draw_alignment=draw_alignment)
         self.alignment = alignment
         self.draw_alignment = draw_alignment
         self.layer = layer
+
         self.parent = parent
+        self.children = []
+        if children:
+            self.children = children
 
     def draw(self) -> Surface:
         pass

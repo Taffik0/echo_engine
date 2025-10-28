@@ -1,10 +1,6 @@
 import inspect
 import pygame
-import sdl2
-import sdl2.ext
-
 from src.settings import *
-from src.utility import clamp
 from src.physics.collision_system import collision_manager
 from src.physics.physics_system import PhysicsSystem
 from src.systems.modifier.modifier_system import ModifierSystem
@@ -12,7 +8,6 @@ from src.systems.modifier.modifier_system import ModifierSystem
 from src.entities.player import Player
 from src.render.camera import Camera
 from src.render.canvas import Canvas
-from src.sound_manager import SoundManager
 from src.systems.event_system import EventSystem
 from src.systems.user_imput.user_input_system import UserInputSystem
 
@@ -20,7 +15,7 @@ from src.spawners import spawner_register
 from src.workers.worker_register import WorkerRegister
 from src.visual_effects.visual_effects_registr import VisualEffectRegister
 
-from src.physics.transform import Transform, TransformUI
+from src.physics.transform import Transform
 from src.physics.vectors import Vector2
 
 
@@ -83,7 +78,10 @@ class Game:
         WorkerRegister.workers_update(dt)
 
         collision_manager.check_all()
-        EventSystem.trigger_event("lastUpdate") # call lastUpdate event
+        EventSystem.trigger_event("lastUpdate")  # call lastUpdate event
+
+    def exit(self):
+        self.running = False
 
     def end_game(self):
         self.game_over = True
