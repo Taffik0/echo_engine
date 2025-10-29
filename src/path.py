@@ -1,4 +1,5 @@
 import os
+from src.systems.logger import Logger
 
 
 current_file = os.path.abspath(__file__)
@@ -14,6 +15,16 @@ os.makedirs(SAVES_DIR, exist_ok=True)
 # Папка с ресурсами
 ASSETS_DIR = os.path.join(PROJECT_ROOT, "assets")
 
-print(PROJECT_ROOT)
-print(SAVES_DIR)
-print(ASSETS_DIR)
+# Папка с логами
+LOGS_DIR = os.path.join(PROJECT_ROOT, "logs")
+
+INFO_LOGS_DIR = os.path.join(LOGS_DIR, "info")
+
+def print_status():
+    Logger.info(f"project root {PROJECT_ROOT} - found")
+    Logger.info(f"saves dir {SAVES_DIR} - found")
+    Logger.info(f"assets dir {ASSETS_DIR} - found")
+    Logger.info(f"logs dir {LOGS_DIR} - found")
+    Logger.info(f"logs dir info {INFO_LOGS_DIR} - found")
+
+

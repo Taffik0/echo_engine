@@ -1,5 +1,7 @@
 from src.core.game import Game
 from src.game_manager import GameManager
+from src.systems.logger import Logger
+import src.path as path
 
 # ------------------------------
 # ECHO ENGINE — Mini game engine on python
@@ -9,7 +11,10 @@ from src.game_manager import GameManager
 
 
 if __name__ == "__main__":
+    Logger.init(path.INFO_LOGS_DIR)
+    path.print_status()
     game = Game()
+    Logger.info("Game inited")
     GameManager.game = game
-    #game.reset()  # init вызывается внутри reset
     game.start()
+    Logger.close()

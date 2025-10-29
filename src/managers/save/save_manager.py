@@ -5,6 +5,7 @@ from pathlib import Path
 from src.path import SAVES_DIR
 
 from src.systems.event_system import EventSystem
+from src.systems.logger import Logger
 
 
 class SaveManager:
@@ -22,10 +23,12 @@ class SaveManager:
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
         if not file_path.exists():
+            Logger.error(f"file {file_path} not exist")
             return {}
         with open(file_path, "r", encoding="utf-8") as f:
             try:
                 data_loaded = json.load(f)
             except json.JSONDecodeError:
+                Logger.warning(f"file {file_path} not have json structure. Fixed")
                 return {}
             return data_loaded

@@ -10,3 +10,6 @@ class Component:
 
     def update(self):
         pass
+
+    def on_delete(self):
+        pass

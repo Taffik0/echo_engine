@@ -1,16 +1,16 @@
 import inspect
 import pygame
 from src.settings import *
-from src.physics.physics_system import PhysicsSystem
 from src.systems.modifier.modifier_system import ModifierSystem
+from src.systems.logger import Logger
 
 from src.systems.event_system import EventSystem
 from src.systems.user_imput.user_input_system import UserInputSystem
 
 from src.workers.worker_register import WorkerRegister
-from src.visual_effects.visual_effects_register import VisualEffectRegister
 
 from .scene.scene import Scene
+from .scene.scene_init import scenes_init
 
 
 class Game:
@@ -31,7 +31,7 @@ class Game:
         WorkerRegister.init_workers()
 
     def reset(self):
-        print("reset")
+        Logger.info("reset")
 
         self.running = True
         self.game_over = False
@@ -79,15 +79,15 @@ class Game:
         self.game_over = True
         stack = inspect.stack()
         caller = stack[1]  # [0] — это текущий кадр, [1] — кто вызвал
-        print(f"Игра закончена от: {caller.function}, в файле: {caller.filename}, строка: {caller.lineno}")
-        print(self.active_scene.entities)
         EventSystem.trigger_event("end_game")
-        print(f"entity in game {len(self.active_scene.entities)}")
+        Logger.info(f"Игра закончена от: {caller.function}, в файле: {caller.filename}, строка: {caller.lineno}")
+        Logger.info(f"{self.active_scene.entities}")
+        Logger.info(f"entity in game {len(self.active_scene.entities)}")
 
     def draw(self, dt, slow_factor):
         active_scene = self.active_scene
-        self.screen.fill(BLACK)
-        # VisualEffectRegister.under_draw(self.screen, dt*slow_factor)
+        self.screen.fill(BACKGROUND_COLOR)
+
         active_scene.visual_effects_register.under_draw(self.screen, dt*slow_factor)
 
         for en in active_scene.entities:
@@ -108,27 +108,26 @@ class Game:
         if active_scene.player:
             active_scene.player.draw(self.screen)
 
-        # VisualEffectRegister.draw(self.screen, dt*slow_factor)
         active_scene.visual_effects_register.draw(self.screen, dt*slow_factor)
 
         for canvas in active_scene.canvases:
             canvas.add_to_draw_queue_all_ui()
             canvas.drawing_queue(self.screen)
 
-        # VisualEffectRegister.over_draw(self.screen, dt*slow_factor)
         active_scene.visual_effects_register.over_draw(self.screen, dt*slow_factor)
 
         pygame.display.flip()
 
     def start(self):
         EventSystem.trigger_event("init")
+        self.scenes = scenes_init()
         if not self.scenes:
-            print("error")
+            Logger.error("can't run - no scenes")
             return
         self.active_scene = self.scenes[0]
-
-        self.run()
         EventSystem.trigger_event("start")
+        self.active_scene.event_system.trigger_event("start")
+        self.run()
 
     def run(self):
         while self.running:

@@ -64,6 +64,7 @@ class EntityData:
     def remove_component(self, component):
         """Удаляет конкретный экземпляр компонента."""
         if component in self.components:
+            component.on_delete()
             self.components.remove(component)
 
     def remove_components_of_type(self, comp_type):
