@@ -6,6 +6,8 @@ from .worker import Worker
 
 from src.utils.class_holder import ClassHolder
 
+from src.settings import START_MESSAGE
+
 
 class StartWorker(Worker):
     def __init__(self):
@@ -14,7 +16,7 @@ class StartWorker(Worker):
 
     @staticmethod
     def start():
-        print("Hello from start worker ^_^ :) (; *_* @_@ -_- 0_0  <- <-")
+        print(START_MESSAGE)
 
     def reset(self):
         pass

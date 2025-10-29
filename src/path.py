@@ -19,6 +19,8 @@ ASSETS_DIR = os.path.join(PROJECT_ROOT, "assets")
 LOGS_DIR = os.path.join(PROJECT_ROOT, "logs")
 
 INFO_LOGS_DIR = os.path.join(LOGS_DIR, "info")
+CRASH_LOGS_DIR = os.path.join(LOGS_DIR, "crash")
+
 
 def print_status():
     Logger.info(f"project root {PROJECT_ROOT} - found")
@@ -26,5 +28,6 @@ def print_status():
     Logger.info(f"assets dir {ASSETS_DIR} - found")
     Logger.info(f"logs dir {LOGS_DIR} - found")
     Logger.info(f"logs dir info {INFO_LOGS_DIR} - found")
+    Logger.info(f"logs dir crash {CRASH_LOGS_DIR} - found")
 
 

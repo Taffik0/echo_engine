@@ -1,6 +1,7 @@
 from src.core.game import Game
 from src.game_manager import GameManager
 from src.systems.logger import Logger
+from src.systems.crash_handler import CrashHandler
 import src.path as path
 
 # ------------------------------
@@ -12,6 +13,7 @@ import src.path as path
 
 if __name__ == "__main__":
     Logger.init(path.INFO_LOGS_DIR)
+    CrashHandler.init(path.CRASH_LOGS_DIR)
     path.print_status()
     game = Game()
     Logger.info("Game inited")
