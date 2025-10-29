@@ -75,12 +75,9 @@ class RectCollider(Collider):
         return circle.check_collision_with_rect(self)
 
     def check_collision_with_rect(self, other):
-        normal, penetration = aabb_penetration(self.x, self.y, self.width, self.height,
-                                               other.x, other.y, other.width, other.height)
-        if penetration > 0:
-            return True, normal, penetration
-        else:
-            return False, None, penetration
+        is_collision, normal, penetration = aabb_penetration(self.x, self.y, self.width, self.height,
+                                                             other.x, other.y, other.width, other.height)
+        return is_collision, normal, penetration
 
     def get_projection(self, axis='x'):
         if axis == "x":

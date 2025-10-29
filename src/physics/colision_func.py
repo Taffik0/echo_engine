@@ -6,7 +6,7 @@ from typing import Tuple, Optional
 
 def aabb_penetration(ax: float, ay: float, aw: float, ah: float,
                      bx: float, by: float, bw: float, bh: float
-                     ) -> Tuple[Optional[Vector2], float]:
+                     ) -> Tuple[bool, Optional[Vector2], float]:
     """
     ax,ay = левый верхний угол (или любой corner), aw = width, ah = height
     Возвращает (normal, penetration) или (None, 0) если нет пересечения.
@@ -34,8 +34,8 @@ def aabb_penetration(ax: float, ay: float, aw: float, ah: float,
             # коррекция по Y
             normal = Vector2(0, 1 if dy > 0 else -1)
             penetration = overlap_y
-        return normal, penetration
-    return None, 0.0
+        return True, normal, penetration
+    return False, None, 0.0
 
 
 def circle_penetration(c1_pos, c1_radius, c2_pos, c2_radius) -> Tuple[bool, Optional[Vector2], float]:
