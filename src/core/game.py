@@ -10,7 +10,7 @@ from src.systems.user_imput.user_input_system import UserInputSystem
 from src.workers.worker_register import WorkerRegister
 
 from .scene.scene import Scene
-from .scene.scene_init import scenes_init
+from .scene.scene_init import scenes_init, worker_scenes_init
 
 
 class Game:
@@ -121,6 +121,7 @@ class Game:
     def start(self):
         EventSystem.trigger_event("init")
         self.scenes = scenes_init()
+        worker_scenes_init({scene.name: scene for scene in self.scenes})
         if not self.scenes:
             Logger.error("can't run - no scenes")
             return

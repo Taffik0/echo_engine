@@ -1,0 +1,12 @@
+[2025-10-30 01:10:07] [32mINFO [0m project root C:\Program1\python\minigame\echo_engine - found
+[2025-10-30 01:10:07] [32mINFO [0m saves dir C:\Program1\python\minigame\echo_engine\saves - found
+[2025-10-30 01:10:07] [32mINFO [0m assets dir C:\Program1\python\minigame\echo_engine\assets - found
+[2025-10-30 01:10:07] [32mINFO [0m logs dir C:\Program1\python\minigame\echo_engine\logs - found
+[2025-10-30 01:10:07] [32mINFO [0m logs dir info C:\Program1\python\minigame\echo_engine\logs\info - found
+[2025-10-30 01:10:07] [32mINFO [0m logs dir crash C:\Program1\python\minigame\echo_engine\logs\crash - found
+[2025-10-30 01:10:07] [32mINFO [0m Game inited
+[2025-10-30 01:10:07] [32mINFO [0m {scene.name: scene for scene in self.scenes}
+[2025-10-30 01:10:21] [32mINFO [0m Saving variables...
+[2025-10-30 01:10:21] [32mINFO [0m Игра закончена от: run, в файле: C:\Program1\python\minigame\echo_engine\src\core\game.py, строка: 140
+[2025-10-30 01:10:21] [32mINFO [0m []
+[2025-10-30 01:10:21] [32mINFO [0m entity in game 0

@@ -1,8 +1,8 @@
 from src.systems.event_system import EventSystem
 from src.managers.sound_manager import SoundManager
 
-from .worker_register import WorkerRegister
-from .worker import Worker
+from src.workers.worker_register import WorkerRegister
+from src.workers.worker import Worker
 
 from src.utils.class_holder import ClassHolder
 

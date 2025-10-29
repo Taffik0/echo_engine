@@ -14,6 +14,10 @@ class LocalWorkerRegister:
     def add_worker_prefab(self, worker: ClassHolder):
         self.workers_prefabs.append(worker)
 
+    def add_and_init_worker_prefab(self, worker: ClassHolder):
+        self.workers_prefabs.append(worker)
+        self.workers.append(worker.create_instance())
+
     def init_workers(self):
         for worker_prefab in self.workers_prefabs:
             self.workers.append(worker_prefab.create_instance())

@@ -2,7 +2,7 @@ from src.systems.event_system import LocalEventSystem
 from src.physics.collision_system import CollisionSystem
 from src.physics.physics_system import PhysicsSystem
 from src.visual_effects.visual_effects_register import VisualEffectRegister
-from src.workers.local_worker_reister import LocalWorkerRegister
+from src.workers.local_worker_register import LocalWorkerRegister
 from src.spawners.spawner_register import SpawnersRegister
 from src.systems.global_variables.local_global_variables_system import LocalGlobalVariablesSystem
 
