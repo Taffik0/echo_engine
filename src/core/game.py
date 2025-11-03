@@ -12,6 +12,8 @@ from src.workers.worker_register import WorkerRegister
 from .scene.scene import Scene
 from .scene.scene_init import scenes_init, worker_scenes_init
 
+from src.utils.class_holder import SceneHolder
+
 
 class Game:
     def __init__(self):
@@ -20,7 +22,8 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
 
-        self.scenes: list[Scene] = []
+        self.scenes_prefab: list[SceneHolder] = []
+        self.scenes_loaded: list[Scene] = []
         self.active_scene: Scene | None = None
 
         self.running = True
@@ -120,12 +123,13 @@ class Game:
 
     def start(self):
         EventSystem.trigger_event("init")
-        self.scenes = scenes_init()
-        worker_scenes_init({scene.name: scene for scene in self.scenes})
-        if not self.scenes:
+        self.scenes_prefab = scenes_init()
+        worker_scenes_init({scene.name: scene for scene in self.scenes_prefab})
+        if not self.scenes_prefab:
             Logger.error("can't run - no scenes")
             return
-        self.active_scene = self.scenes[0]
+        self.scenes_loaded.append(self.scenes_prefab[0].create_instance())
+        self.active_scene = self.scenes_loaded[0]
         EventSystem.trigger_event("start")
         self.active_scene.event_system.trigger_event("start")
         self.run()

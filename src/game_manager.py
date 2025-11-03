@@ -18,6 +18,10 @@ class GameManager:
         return cls.game.active_scene
 
     @classmethod
+    def set_active_scene(cls, scene: "Scene"):
+        cls.game.active_scene = scene
+
+    @classmethod
     def destroy_me(cls, entity):
         """Уничтожает сущность"""
         collection = cls.game.entities

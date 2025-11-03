@@ -1,0 +1,12 @@
+{
+    "timestamp": "2025-10-30_19-59-36",
+    "type": "KeyboardInterrupt",
+    "message": "",
+    "traceback": "Traceback (most recent call last):\n  File \"C:\\Program1\\python\\minigame\\echo_engine\\src\\main.py\", line 20, in <module>\n    game.start()\n  File \"C:\\Program1\\python\\minigame\\echo_engine\\src\\core\\game.py\", line 135, in start\n    self.run()\n  File \"C:\\Program1\\python\\minigame\\echo_engine\\src\\core\\game.py\", line 139, in run\n    dt = self.clock.tick(FPS) / 1000.0\n         ^^^^^^^^^^^^^^^^^^^^\nKeyboardInterrupt\n",
+    "game_state": {
+        "active_scene": "main",
+        "entities_count": 0,
+        "entities": [],
+        "workers_count": 0
+    }
+}

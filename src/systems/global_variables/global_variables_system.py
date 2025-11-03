@@ -1,6 +1,8 @@
 from src.systems.event_system import EventSystem
 from src.managers.save.save_manager import SaveManager
 
+from src.systems.logger import Logger
+
 
 class GlobalVariable:
     def __init__(self, data, is_saving):
@@ -30,7 +32,7 @@ class GlobalVariablesSystem:
 
     @classmethod
     def save(cls):
-        print("Saving variables...")
+        Logger.info("Saving variables...")
         save_data = {}
         for name, variable in cls.variables.items():
             if variable.is_saving:
@@ -39,7 +41,7 @@ class GlobalVariablesSystem:
 
     @classmethod
     def load(cls):
-        print("Load variables...")
+        Logger.info("Load variables...")
         save_data = SaveManager.load("variables", "variables")
         for name, variable in save_data.items():
             cls.variables[name] = GlobalVariable(variable, is_saving=True)

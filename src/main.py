@@ -10,7 +10,6 @@ import src.path as path
 # Tested with pygame 2.x
 
 
-
 if __name__ == "__main__":
     Logger.init(path.INFO_LOGS_DIR)
     CrashHandler.init(path.CRASH_LOGS_DIR)
