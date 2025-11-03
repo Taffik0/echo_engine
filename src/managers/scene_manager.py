@@ -3,7 +3,6 @@ from src.core.scene.scene import Scene
 from src.utils.class_holder import SceneHolder
 
 
-
 class SceneManager:
 
     # === Смена сцен ===
@@ -36,19 +35,12 @@ class SceneManager:
         GameManager.game.scenes_loaded.remove(GameManager.active_scene())
         scene = GameManager.active_scene()
         if name in scenes_loaded_dict:
-            if scene in GameManager.game.scenes_loaded:
-                GameManager.game.scenes_loaded.remove(scene)
+            cls.unload(scene.name)
 
             GameManager.set_active_scene(scenes_loaded_dict[name])
         elif name in scenes_prefab_dict:
-            if scene in GameManager.game.scenes_loaded:
-                GameManager.game.scenes_loaded.remove(scene)
-
-            scene = scenes_prefab_dict[name].create_instance()
-            GameManager.game.scenes_loaded.append(scene)
-            GameManager.active_scene().unload()
-            GameManager.set_active_scene(scene)
-        GameManager.active_scene().event_system.trigger_event("start")
+            cls.unload(scene.name)
+            cls.load(name)
 
     # === Загрузка / выгрузка ===
     @classmethod
@@ -58,7 +50,9 @@ class SceneManager:
         scenes_loaded_dict = {scene.name: scene for scene in scenes_loaded}
         scenes_prefab_dict = {scene.name: scene for scene in scenes_prefab}
         if name in scenes_prefab_dict and name not in scenes_loaded_dict:
-            GameManager.game.scenes_loaded.append(scenes_prefab_dict[name].create_instance())
+            scene: Scene = scenes_prefab_dict[name].create_instance()
+            GameManager.game.scenes_loaded.append(scene)
+            scene.event_system.trigger_event("start")
 
     @classmethod
     def unload(cls, name: str) -> None:
@@ -67,7 +61,9 @@ class SceneManager:
         scenes_loaded_dict = {scene.name: scene for scene in scenes_loaded}
         scenes_prefab_dict = {scene.name: scene for scene in scenes_prefab}
         if name in scenes_prefab_dict and name in scenes_loaded_dict:
-            GameManager.game.scenes_loaded.remove(scenes_loaded_dict[name])
+            scene: Scene = scenes_loaded_dict[name]
+            GameManager.game.scenes_loaded.remove()
+            scene.event_system.trigger_event("game_end")
 
     # === Утилиты ===
     @classmethod

@@ -83,6 +83,8 @@ class Game:
         stack = inspect.stack()
         caller = stack[1]  # [0] — это текущий кадр, [1] — кто вызвал
         EventSystem.trigger_event("end_game")
+        for scene in self.scenes_loaded:
+            scene.event_system.trigger_event("end_game")
         Logger.info(f"Игра закончена от: {caller.function}, в файле: {caller.filename}, строка: {caller.lineno}")
         Logger.info(f"{self.active_scene.entities}")
         Logger.info(f"entity in game {len(self.active_scene.entities)}")
