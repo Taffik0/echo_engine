@@ -3,6 +3,8 @@ import inspect
 
 from src.settings import KEY_INPUT_LOG
 
+from src.systems.user_imput.user_input_system import InputKey, KeyEvent
+
 
 def call_with_available_args(method, **possible_args):
     # получаем имена параметров метода
@@ -12,21 +14,6 @@ def call_with_available_args(method, **possible_args):
     # оставляем только те аргументы, которые есть в сигнатуре
     filtered_args = {k: v for k, v in possible_args.items() if k in params}
     return method(**filtered_args)
-
-
-class InputKey:
-    def __init__(self, key, time):
-        self.key = key
-        self.time = time
-
-
-class KeyEvent:
-    def __init__(self, key, method, on_down=False, on_hold=False, on_up=False):
-        self.key = key
-        self.method = method
-        self.on_down = on_down
-        self.on_hold = on_hold
-        self.on_up = on_up
 
 
 class LocalUserInputSystem:
