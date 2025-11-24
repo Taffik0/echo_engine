@@ -47,9 +47,9 @@ class Echo(LifeTimeEntity):
     def on_life_time_end(self):
         GameManager.destroy_me(self)
 
-""" def on_collision(self, other):
-        print(other, self)
-        GameManager.game.end_game()"""
+    def on_collision(self, other):
+        if "player" in other.tags:
+            GameManager.game.end_game()
 
 
 class EchoSpawner(EntitySpawner):
@@ -62,7 +62,11 @@ class EchoSpawner(EntitySpawner):
     def draw(self, surf):
         if not self.visible:
             return
-        pygame.draw.circle(surf, self.color, (int(self.transform.position.x), int(self.transform.position.y)), self.r, 2)
+        surface = surface_manager.create_surface_by_circle(self.r)
+        #  pygame.draw.circle(surf, self.color, (int(self.transform.position.x), int(self.transform.position.y)), self.r, 2)
+        pygame.draw.circle(surface, self.color, (int(self.r), int(self.r)), self.r,2)
+        return surface
+
 
     def on_life_time_end(self):
         super().on_life_time_end()

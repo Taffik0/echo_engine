@@ -1,6 +1,7 @@
 import pygame
 import math
 
+from src.render import surface_manager
 from src.settings import *
 from src.utility import normalize, clamp
 from src.physics.colliders import CircleCollider
@@ -63,17 +64,42 @@ class Player(Entity):
             self.dash_cd = DASH_COOLDOWN
 
     def draw(self, surf):
+        if not self.visible:
+            return
 
-        x = int(self.transform.position.x)
-        y = int(self.transform.position.y)
-        # основной круг игрока
-        pygame.draw.circle(surf, PLAYER_COLOR, (x, y), self.r)
+        # создаём отдельный surface по радиусу
+        surface = surface_manager.create_surface_by_circle(self.r + 16)
+
+        # центр на локальном surface
+        cx = self.r + 16
+        cy = self.r + 16
+
+        # основной круг
+        pygame.draw.circle(surface, PLAYER_COLOR, (cx, cy), self.r)
+
         # dash cooldown ring
         cd_ratio = 1.0 - clamp(self.dash_cd / DASH_COOLDOWN, 0.0, 1.0)
-        pygame.draw.circle(surf, WHITE, (x, y), self.r + 6, 2)
+        pygame.draw.circle(surface, WHITE, (cx, cy), self.r + 6, 2)
+
         end_angle = -math.pi / 2 + cd_ratio * 2 * math.pi
-        pygame.draw.arc(surf, ECHO_COLOR, (x - self.r - 6, y - self.r - 6, (self.r + 6) * 2, (self.r + 6) * 2), -math.pi/2, end_angle, 3)
+        pygame.draw.arc(
+            surface,
+            ECHO_COLOR,
+            (cx - (self.r + 6), cy - (self.r + 6), (self.r + 6) * 2, (self.r + 6) * 2),
+            -math.pi / 2,
+            end_angle,
+            3
+        )
+
         # focus halo
         focus_ratio = clamp(self.focus / FOCUS_MAX, 0.0, 1.0)
         if focus_ratio > 0:
-            pygame.draw.circle(surf, FOCUS_COLOR, (x, y), int(self.r + 10 + 6 * focus_ratio), 1)
+            pygame.draw.circle(
+                surface,
+                FOCUS_COLOR,
+                (cx, cy),
+                int(self.r + 10 + 6 * focus_ratio),
+                1
+            )
+
+        return surface

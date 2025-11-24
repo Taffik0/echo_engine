@@ -2,6 +2,7 @@ import random
 import math
 import pygame
 
+from src.render import surface_manager
 from src.settings import *
 
 from src.entities.entity import Entity, LifeTimeEntity
@@ -31,10 +32,23 @@ class Orb(LifeTimeEntity):
         return self.current_time < self.life_time
 
     def draw(self, surf):
-        # pulsing ring
-        pygame.draw.circle(surf, ORB_COLOR, (int(self.transform.position.x), int(self.transform.position.y)), self.r)
+        if not self.visible:
+            return
+
+        # создаём surface с запасом для пульсающего кольца
+        surface = surface_manager.create_surface_by_circle(self.r + 10)
+
+        cx = self.r + 10
+        cy = self.r + 10
+
+        # основной шар
+        pygame.draw.circle(surface, ORB_COLOR, (cx, cy), self.r)
+
+        # пульсирующее кольцо
         pulse = 2 + int(2 * math.sin(self.current_time * 6))
-        pygame.draw.circle(surf, ORB_COLOR, (int(self.transform.position.x), int(self.transform.position.y)), self.r + 6 + pulse, 1)
+        pygame.draw.circle(surface, ORB_COLOR, (cx, cy), self.r + 6 + pulse, 1)
+
+        return surface
 
     def on_collision(self, other):
         echos = GameManager.get_entity_by_tag("echo")

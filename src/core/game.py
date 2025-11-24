@@ -111,7 +111,15 @@ class Game:
 
         self.camera.drawing_queue(self.screen)
 
-        self.player.draw(self.screen)
+        result_p = self.player.draw(self.screen)
+
+        if isinstance(result_p, pygame.Surface):
+            surface = result_p
+            self.camera.add_to_draw_queue(surface, self.player)
+        # Если draw вернул (Surface, alignment)
+        elif isinstance(result_p, tuple):
+            surface, alignment = result_p
+            self.camera.add_to_draw_queue(surface, self.player, alignment=alignment)
 
         VisualEffectRegister.draw(self.screen, dt*slow_factor)
 

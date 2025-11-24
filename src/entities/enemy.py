@@ -1,6 +1,7 @@
 import random
 import pygame
 
+from src.render import surface_manager
 from src.settings import *
 from src.utility import normalize, clamp
 from src.game_manager import GameManager
@@ -43,10 +44,22 @@ class Enemy(Entity):
         position.y += self.vy * dt
 
     def draw(self, surf):
-        position = self.transform.position
-        pygame.draw.circle(surf, self.color, (int(position.x), int(position.y)), self.r)
-        # small eye
-        pygame.draw.circle(surf, BLACK, (int(position.x), int(position.y)), 3)
+        if not self.visible:
+            return
+
+        # создаём surface по радиусу (чуть больше, чтобы влез глаз)
+        surface = surface_manager.create_surface_by_circle(self.r)
+
+        cx = self.r
+        cy = self.r
+
+        # основной круг
+        pygame.draw.circle(surface, self.color, (cx, cy), self.r)
+
+        # маленький глаз
+        pygame.draw.circle(surface, BLACK, (cx, cy), 3)
+
+        return surface
 
     def on_collision(self, other: Entity):
         if "player" in other.tags:
