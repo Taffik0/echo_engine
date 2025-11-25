@@ -38,8 +38,8 @@ class UI:
     def get_global_position(self) -> Vector2:
         position = self.transform.position
         if self.parent:
-            parent_position = self.parent.get_global_position()
-            position += Vector2(parent_position.x * self.transform.relative_position.x,
-                                parent_position.y * self.transform.relative_position.y)
+            parent_size = self.parent.get_global_size()
+            position += Vector2(parent_size.x * self.transform.relative_position.x,
+                                parent_size.y * self.transform.relative_position.y)
         size = self.get_global_size()
         return position + (size * alignment_dict[self.alignment])

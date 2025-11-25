@@ -1,6 +1,6 @@
 import inspect
 import pygame
-from src.settings import *
+import src.settings as settings
 from src.physics.collision_system import collision_manager
 from src.physics.physics_system import PhysicsSystem
 from src.systems.modifier.modifier_system import ModifierSystem
@@ -23,7 +23,7 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Shadow Echo — Endless Mini-Arcade")
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("consolas", 20)
 
@@ -93,7 +93,8 @@ class Game:
         print(f"entity in game {len(self.entities)}")
 
     def draw(self, dt, slow_factor):
-        self.screen.fill(BLACK)
+        settings.WIDTH, settings.HEIGHT = self.screen.get_size()
+        self.screen.fill(settings.BLACK)
         VisualEffectRegister.under_draw(self.screen, dt*slow_factor)
 
         for en in self.entities:
@@ -137,7 +138,7 @@ class Game:
 
     def run(self):
         while self.running:
-            dt = self.clock.tick(FPS) / 1000.0
+            dt = self.clock.tick(settings.FPS) / 1000.0
             # Input
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

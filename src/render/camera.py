@@ -59,24 +59,38 @@ class Camera:
             self._draw(draw_queue_record, screen)
         self.draw_queue = []
 
-    def _draw(self, draw_queue_record: DrawQueueRecord, screen: Surface):
+    def _draw(self, record: DrawQueueRecord, screen: Surface):
         screen_size = Vector2(*screen.get_size())
-        surface_size = Vector2(*draw_queue_record.surface.get_size())
-        screen_pos_x = draw_queue_record.position.x * (screen_size.x / (self.transform.size.x * self.pixels_per_unit))
-        screen_pos_y = draw_queue_record.position.y * (screen_size.y / (self.transform.size.y * self.pixels_per_unit))
+        cam = self.transform
 
-        screen_pos_x += surface_size.x * draw_queue_record.alignment.x
-        screen_pos_y += surface_size.y * draw_queue_record.alignment.y
+        # позиция объекта в долях камеры (0..1)
+        rel_x = (record.transform.position.x - cam.position.x) / cam.size.x
+        rel_y = (record.transform.position.y - cam.position.y) / cam.size.y
 
-        screen_pos_x = int(screen_pos_x)
-        screen_pos_y = int(screen_pos_y)
+        # преобразуем в пиксели
+        screen_x = rel_x * screen_size.x
+        screen_y = rel_y * screen_size.y
 
-        size_x = int(screen_size.x / (self.transform.size.x * self.pixels_per_unit)) * surface_size.x
-        size_y = int(screen_size.y / (self.transform.size.y * self.pixels_per_unit)) * surface_size.y
+        # размеры спрайта
+        surf_w, surf_h = record.surface.get_size()
 
-        if draw_queue_record.is_scaling:
-            size_x *= draw_queue_record.transform.size.x
-            size_y *= draw_queue_record.transform.size.y
+        # масштаб камеры
+        unit_scale_x = screen_size.x / (cam.size.x * self.pixels_per_unit)
+        unit_scale_y = screen_size.y / (cam.size.y * self.pixels_per_unit)
 
-        scaled_surface = pygame.transform.scale(draw_queue_record.surface, (size_x, size_y))
-        screen.blit(scaled_surface, (screen_pos_x, screen_pos_y))
+        draw_w = surf_w * unit_scale_x
+        draw_h = surf_h * unit_scale_y
+
+        if record.is_scaling:
+            draw_w *= record.transform.size.x
+            draw_h *= record.transform.size.y
+
+        # применяем выравнивание
+        screen_x += draw_w * record.alignment.x
+        screen_y += draw_h * record.alignment.y
+
+        # финальный рендер
+        screen.blit(
+            pygame.transform.scale(record.surface, (int(draw_w), int(draw_h))),
+            (int(screen_x), int(screen_y))
+        )
